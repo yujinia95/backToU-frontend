@@ -1,0 +1,67 @@
+/* =========================================================
+   Design tokens
+   Palette: warm stone neutrals + two muted status colors
+   (rust for "lost", moss for "found"), brass as the single
+   accent — echoes a physical claim-tag, not a generic brand.
+   ========================================================= */
+:root{
+  /* Neutrals */
+  --stone-0:   #FBFAF8;
+  --stone-50:  #F5F3EF;
+  --stone-100: #EAE7E0;
+  --stone-200: #DBD7CC;
+  --stone-300: #C2BCAC;
+  --stone-500: #8B8577;
+  --stone-700: #55504A;
+  --stone-800: #38352F;
+  --stone-900: #22201C;
+
+  /* Status / accent */
+  --brass:        #9C7A3C;
+  --brass-ink:    #FBFAF8;
+  --lost-rust:    #A24E3A;
+  --lost-rust-bg: #F5E4DE;
+  --found-moss:   #4C6656;
+  --found-moss-bg:#E4EAE2;
+
+  /* Semantic */
+  --bg:          var(--stone-50);
+  --surface:     var(--stone-0);
+  --border:      var(--stone-200);
+  --ink:         var(--stone-900);
+  --ink-muted:   var(--stone-700);
+  --ink-faint:   var(--stone-500);
+  --focus-ring:  #2E5C4E;
+
+  /* Type */
+  --font-display: 'Fraunces', 'Iowan Old Style', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-tag: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Scale */
+  --step-xs: 0.75rem;
+  --step-sm: 0.875rem;
+  --step-base: 1rem;
+  --step-md: 1.25rem;
+  --step-lg: 1.75rem;
+  --step-xl: 2.5rem;
+  --step-2xl: 3.5rem;
+
+  /* Space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Shape */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-tag: 10px;
+  --border-w: 1px;
+
+  --content-width: 1120px;
+}

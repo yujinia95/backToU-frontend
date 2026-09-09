@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BackToU</title>
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="container app-header-inner">
+    <a href="main.html" class="brand">BackTo<span>U</span></a>
+
+    <form class="search-bar" role="search" action="found-items.html" method="get">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" name="q" placeholder="Search found items by name, place…" aria-label="Search found items">
+      <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    </form>
+
+    <div class="header-spacer"></div>
+
+    <button class="burger-btn" data-burger-open aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="nav-scrim" data-nav-scrim></div>
+<aside class="nav-drawer" id="nav-drawer" data-nav-drawer aria-label="Main menu">
+  <div class="nav-drawer-head">
+    <span class="brand">Menu</span>
+    <button class="nav-close" data-burger-close aria-label="Close menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <ul class="nav-links">
+    <li><a href="main.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21V13a1 1 0 011-1h4a1 1 0 011 1v8"/><path d="M3 10l9-7 9 7"/></svg>Home</a></li>
+    <li><a href="found-items.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 7v10l8 4 8-4V7"/></svg>Found items</a></li>
+    <li><a href="lost-items.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Lost items</a></li>
+    <li><a href="create-item.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Post a lost/found item</a></li>
+    <li><a href="matches.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9.5-8.5C1 9 2.5 5.5 6 5c2-.3 3.5.8 6 3.3C14.5 5.8 16 4.7 18 5c3.5.5 5 4 3.5 7.5C19 16.65 12 21 12 21z"/></svg>My matches</a></li>
+  </ul>
+  <div class="nav-foot">
+    <div class="nav-user">
+      <div class="nav-avatar" data-user-avatar>?</div>
+      <div>
+        <div class="nav-user-name" data-user-name>Signed in</div>
+        <div class="nav-user-email" data-user-email></div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-block btn-sm" data-logout>Log out</button>
+  </div>
+</aside>
+
+<main class="app-main">
+  <div class="container">
+    <div class="page-head">
+      <div>
+        <h1 data-greeting>Welcome back</h1>
+        <p data-greeting-sub>Here's what's new since you last checked.</p>
+      </div>
+      <a href="create-item.html" class="btn btn-accent">Post an item</a>
+    </div>
+
+    <form class="search-bar mobile-search" role="search" action="found-items.html" method="get">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" name="q" placeholder="Search found items…" aria-label="Search found items">
+      <button type="submit" class="btn btn-primary btn-sm">Go</button>
+    </form>
+
+    <section class="dash-section">
+      <div class="dash-section-head">
+        <h2>Recently lost</h2>
+        <a href="lost-items.html" class="dash-view-all">View all lost items →</a>
+      </div>
+      <div class="card-grid" id="recent-lost-grid"></div>
+    </section>
+
+    <section class="dash-section">
+      <div class="dash-section-head">
+        <h2>Recently found</h2>
+        <a href="found-items.html" class="dash-view-all">View all found items →</a>
+      </div>
+      <div class="card-grid" id="recent-found-grid"></div>
+    </section>
+  </div>
+</main>
+
+<script src="js/utils.js"></script>
+<script src="js/models.js"></script>
+<script src="js/data.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/render.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

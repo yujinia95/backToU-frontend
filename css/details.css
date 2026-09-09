@@ -1,0 +1,91 @@
+.details-shell{
+  max-width: 760px;
+}
+
+.back-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--step-sm);
+  color: var(--ink-muted);
+  margin-bottom: var(--space-5);
+}
+.back-link:hover{ color: var(--ink); }
+
+.details-card{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-tag);
+  padding: var(--space-6);
+  position: relative;
+}
+.details-card .tag-hole{
+  position: absolute; top: var(--space-5); right: var(--space-5);
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border); background: var(--bg);
+}
+
+.details-top{
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+.details-thumb{
+  width: 160px; height: 160px; flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--stone-100);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--stone-300);
+  overflow: hidden;
+}
+.details-thumb img{ width: 100%; height: 100%; object-fit: cover; }
+
+.details-id{
+  font-family: var(--font-tag);
+  font-size: var(--step-xs);
+  color: var(--ink-faint);
+  margin-bottom: var(--space-1);
+}
+.details-title{
+  padding-right: 30px;
+  margin-bottom: var(--space-2);
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+}
+
+.details-facts{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3) var(--space-5);
+  margin: var(--space-5) 0;
+  padding: var(--space-4) 0;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+}
+.details-fact dt{
+  font-size: var(--step-xs);
+  color: var(--ink-faint);
+  margin-bottom: 2px;
+}
+.details-fact dd{
+  margin: 0;
+  font-weight: 600;
+}
+
+.details-actions{
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-5);
+}
+
+.details-loading, .details-error{
+  padding: var(--space-8) 0;
+  text-align: center;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 560px){
+  .details-top{ flex-direction: column; }
+  .details-thumb{ width: 100%; height: 200px; }
+  .details-facts{ grid-template-columns: 1fr; }
+}

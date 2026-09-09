@@ -1,0 +1,48 @@
+.form-shell{
+  max-width: 640px;
+}
+
+.hint-inline{
+  font-weight: 400;
+  color: var(--ink-faint);
+  font-size: var(--step-xs);
+}
+
+.form-card{
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+}
+
+.field-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.photo-drop{
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: var(--step-sm);
+  cursor: pointer;
+  position: relative;
+}
+.photo-drop input{
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.photo-drop strong{ color: var(--ink); }
+
+.form-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 560px){
+  .field-row{ grid-template-columns: 1fr; }
+}
