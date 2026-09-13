@@ -1,72 +1,59 @@
 class Api {
   static BASE_URL = "http://localhost:8000/api/v1";
 
+  static async request(path, options = {}) {
+    const response = await fetch(`${this.BASE_URL}${path}`, options);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      const message = Array.isArray(errorData.detail)
+        ? errorData.detail.map((e) => e.msg).join(", ")
+        : errorData.detail || "Request failed";
+      throw new Error(message);
+    }
+
+    if (response.status === 204) {
+      return null;
+    }
+
+    return response.json();
+  }
+
   static async signup(data) {
-    const response = await fetch(`${this.BASE_URL}/auth/signup`, {
+    return this.request("/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Signup failed");
-    }
-    return response.json();
   }
 
   static async login(data) {
-    const response = await fetch(`${this.BASE_URL}/auth/login`, {
+    return this.request("/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Login failed");
-    }
-    return response.json();
   }
 
   static async getItems() {
-    const response = await fetch(`${this.BASE_URL}/items`);
-    return response.json();
+    return this.request("/items");
   }
 
   static async getItem(id) {
-    const response = await fetch(`${this.BASE_URL}/items/${id}`);
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Item load failed");
-    }
-    return response.json();
+    return this.request(`/items/${id}`);
   }
 
   static async patchItem(id, data) {
-    const response = await fetch(`${this.BASE_URL}/items/${id}`, {
+    return this.request(`/items/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Item update failed");
-    }
-    return response.json();
   }
 
   static async deleteItem(id) {
-    const response = await fetch(`${this.BASE_URL}/items/${id}`, {
+    return this.request(`/items/${id}`, {
       method: "DELETE",
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || "Item delete failed");
-    }
-    // No content to return
   }
 }
