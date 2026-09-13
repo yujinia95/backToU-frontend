@@ -28,7 +28,11 @@ class Login {
       localStorage.setItem("currentUser", JSON.stringify(user));
       window.location.href = "main.html";
     } catch (error) {
-      Utils.showAlert(alertEl, error.message);
+      const message =
+        error instanceof TypeError
+          ? "Unable to connect to the server. Please try again later."
+          : error.message;
+      Utils.showAlert(alertEl, message);
     }
   }
 }
