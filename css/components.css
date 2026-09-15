@@ -31,6 +31,12 @@
 }
 .btn-ghost:hover{ border-color: var(--stone-500); }
 
+.btn-danger{
+  background: var(--lost-rust);
+  color: var(--stone-0);
+}
+.btn-danger:hover{ background: #8a3f2e; }
+
 .btn-block{ width: 100%; }
 
 .btn-sm{ padding: 8px 14px; font-size: var(--step-xs); }

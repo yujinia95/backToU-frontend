@@ -3,19 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BackToU: Item details</title>
+<title>BackToU: Lost items</title>
 <link rel="stylesheet" href="css/variables.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/app.css">
-<link rel="stylesheet" href="css/details.css">
 </head>
 <body>
 
 <header class="app-header">
   <div class="container app-header-inner">
     <a href="main.html" class="brand">BackTo<span>U</span></a>
+
+    <form class="search-bar" role="search" id="search-form">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="search-input" placeholder="Search lost items by name, place, category…" aria-label="Search lost items">
+      <button type="submit" class="btn btn-primary btn-sm">Search</button>
+    </form>
+
     <div class="header-spacer"></div>
+
     <button class="burger-btn" data-burger-open aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
@@ -50,21 +57,23 @@
 </aside>
 
 <main class="app-main">
-  <div class="container details-shell">
-    <a href="javascript:history.back()" class="back-link">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-      Back
-    </a>
-
-    <div id="details-content">
-      <p class="details-loading">Loading item…</p>
+  <div class="container">
+    <div class="page-head">
+      <div>
+        <h1>Lost items</h1>
+        <p>Reports from people still looking for something. Recognize one you've found?</p>
+      </div>
+      <a href="create-item.html" class="btn btn-accent">Report a lost item</a>
     </div>
 
-    <div class="details-actions" data-owner-actions hidden>
-      <button type="button" class="btn btn-ghost" data-edit-item>Edit</button>
-      <button type="button" class="btn btn-primary" data-resolve-item>Mark as resolved</button>
-      <button type="button" class="btn btn-danger" data-delete-item>Delete post</button>
-    </div>
+    <form class="search-bar mobile-search" role="search" id="search-form-mobile">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" placeholder="Search lost items…" aria-label="Search lost items">
+      <button type="submit" class="btn btn-primary btn-sm">Go</button>
+    </form>
+
+    <p class="results-count" id="results-count"></p>
+    <div class="card-grid" id="item-grid"></div>
   </div>
 </main>
 
@@ -74,6 +83,7 @@
 <script src="js/auth.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/render.js"></script>
-<script src="js/details.js"></script>
+<script src="js/item-list-page.js"></script>
+<script src="js/lost-items.js"></script>
 </body>
 </html>

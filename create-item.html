@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BackToU: Post an item</title>
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/forms.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="container app-header-inner">
+    <a href="main.html" class="brand">BackTo<span>U</span></a>
+    <div class="header-spacer"></div>
+    <button class="burger-btn" data-burger-open aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="nav-scrim" data-nav-scrim></div>
+<aside class="nav-drawer" id="nav-drawer" data-nav-drawer aria-label="Main menu">
+  <div class="nav-drawer-head">
+    <span class="brand">Menu</span>
+    <button class="nav-close" data-burger-close aria-label="Close menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <ul class="nav-links">
+    <li><a href="main.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21V13a1 1 0 011-1h4a1 1 0 011 1v8"/><path d="M3 10l9-7 9 7"/></svg>Home</a></li>
+    <li><a href="found-items.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 7v10l8 4 8-4V7"/></svg>Found items</a></li>
+    <li><a href="lost-items.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Lost items</a></li>
+    <li><a href="create-item.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Post a lost/found item</a></li>
+    <li><a href="matches.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9.5-8.5C1 9 2.5 5.5 6 5c2-.3 3.5.8 6 3.3C14.5 5.8 16 4.7 18 5c3.5.5 5 4 3.5 7.5C19 16.65 12 21 12 21z"/></svg>My matches</a></li>
+  </ul>
+  <div class="nav-foot">
+    <div class="nav-user">
+      <div class="nav-avatar" data-user-avatar>?</div>
+      <div>
+        <div class="nav-user-name" data-user-name>Signed in</div>
+        <div class="nav-user-email" data-user-email></div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-block btn-sm" data-logout>Log out</button>
+  </div>
+</aside>
+
+<main class="app-main">
+  <div class="container form-shell">
+    <div class="page-head">
+      <div>
+        <h1>Post an item</h1>
+        <p>Tell us what happened. The more specific the description and location, the easier it is to match.</p>
+      </div>
+    </div>
+
+    <div class="alert alert-success" data-form-success role="status">Posted! Redirecting…</div>
+
+    <div class="form-card">
+      <form id="create-form" novalidate>
+        <div class="field">
+          <label>Type of post</label>
+          <div class="radio-row">
+            <label class="radio-card">
+              <input type="radio" name="type" value="found" checked>
+              <div class="kind">Found</div>
+              <div class="desc">You found something and want to report it</div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="type" value="lost">
+              <div class="kind">Lost</div>
+              <div class="desc">You lost something and want to be matched</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="field" data-field="title">
+          <label for="title">Item title</label>
+          <input type="text" id="title" name="title" placeholder="e.g. Grey wool scarf" required>
+          <p class="error">Enter a short title for the item.</p>
+        </div>
+
+        <div class="field-row">
+          <div class="field" data-field="category">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option value="">Select a category</option>
+              <option>Bags</option>
+              <option>Clothing</option>
+              <option>Electronics</option>
+              <option>Keys</option>
+              <option>Jewelry</option>
+              <option>Accessories</option>
+              <option>Sports</option>
+              <option>Documents</option>
+              <option>Other</option>
+            </select>
+            <p class="error">Choose a category.</p>
+          </div>
+          <div class="field" data-field="date">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required>
+            <p class="error">Choose the date it was lost or found.</p>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field" data-field="brand">
+            <label for="brand">Brand <span class="hint-inline">(optional)</span></label>
+            <input type="text" id="brand" name="brand" placeholder="e.g. Fjallraven">
+          </div>
+          <div class="field" data-field="colors">
+            <label for="colors">Colors</label>
+            <input type="text" id="colors" name="colors" placeholder="e.g. grey, black" required>
+            <p class="error">Enter at least one color.</p>
+          </div>
+        </div>
+
+        <div class="field" data-field="location">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" placeholder="e.g. Riverside Park, west fountain" required>
+          <p class="error">Enter where it was lost or found.</p>
+        </div>
+
+        <div class="field" data-field="description">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" placeholder="Color, brand, distinguishing details…" required></textarea>
+          <p class="error">Add a short description.</p>
+        </div>
+
+        <div class="field">
+          <label>Photo (optional)</label>
+          <div class="photo-drop">
+            <input type="file" id="photo" name="photo" accept="image/*">
+            <span><strong>Click to upload</strong> or drag a photo here</span>
+          </div>
+          <p class="hint" id="photo-filename"></p>
+        </div>
+
+        <div class="alert alert-error" data-form-alert role="alert"></div>
+
+        <div class="form-actions">
+          <a href="main.html" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-accent">
+            <span data-btn-label>Post item</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script src="js/utils.js"></script>
+<script src="js/models.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/create-item.js"></script>
+</body>
+</html>
