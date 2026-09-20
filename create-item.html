@@ -111,12 +111,12 @@
         <div class="field-row">
           <div class="field" data-field="brand">
             <label for="brand">Brand <span class="hint-inline">(optional)</span></label>
-            <input type="text" id="brand" name="brand" placeholder="e.g. Fjallraven">
+            <input type="text" id="brand" name="brand" maxlength="100" placeholder="e.g. Fjallraven">
           </div>
           <div class="field" data-field="colors">
             <label for="colors">Colors</label>
             <input type="text" id="colors" name="colors" placeholder="e.g. grey, black" required>
-            <p class="error">Enter at least one color.</p>
+            <p class="error">Enter at least one color. Each color must be 20 characters or fewer.</p>
           </div>
         </div>
 
@@ -127,18 +127,17 @@
         </div>
 
         <div class="field" data-field="description">
-          <label for="description">Description</label>
-          <textarea id="description" name="description" placeholder="Color, brand, distinguishing details…" required></textarea>
-          <p class="error">Add a short description.</p>
+          <label for="description">Description <span class="hint-inline">(optional)</span></label>
+          <textarea id="description" name="description" maxlength="2000" placeholder="Distinguishing details…"></textarea>
+          <p class="error">Description must be 2,000 characters or fewer.</p>
         </div>
 
+        <!-- TODO(post-MVP): Implement photo upload after backend support is added. -->
         <div class="field">
-          <label>Photo (optional)</label>
-          <div class="photo-drop">
-            <input type="file" id="photo" name="photo" accept="image/*">
-            <span><strong>Click to upload</strong> or drag a photo here</span>
+          <label>Photo <span class="hint-inline">(coming soon)</span></label>
+          <div class="photo-drop is-disabled" aria-disabled="true">
+            <span>Photo upload will be available after MVP</span>
           </div>
-          <p class="hint" id="photo-filename"></p>
         </div>
 
         <div class="alert alert-error" data-form-alert role="alert"></div>

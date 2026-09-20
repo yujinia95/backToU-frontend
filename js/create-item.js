@@ -13,9 +13,6 @@ class CreateItemPage {
     this.submitButton = Utils.qs('[type="submit"]', this.form);
     this.buttonLabel = Utils.qs("[data-btn-label]", this.form);
 
-    this.photoInput = Utils.qs("#photo", this.form);
-    this.photoFilename = Utils.qs("#photo-filename", this.form);
-
     this.currentUser = null; // Stores the logged-in user after init()
     this.isSubmitting = false; // Prevents the form from being submitted twice
   }
@@ -35,22 +32,23 @@ class CreateItemPage {
 
     this.form.addEventListener("submit", (event) => this.handleSubmit(event));
 
+    // Add an event listener to every input field in the form.
+    // After a failed submission, when the user edits a field,
+    // remove that field's error style and hide the form-level error message.
     Utils.qsa("input, select, textarea", this.form).forEach((field) => {
       field.addEventListener("input", () => {
         this.#showFieldError(field.name, false);
         Utils.hideAlert(this.errorAlert);
       });
     });
-
-    this.photoInput?.addEventListener("change", () => this.#showPhotoFilename());
   }
 
   /**
    * Validates the form and sends the item to the backend.
    */
   async handleSubmit(event) {
-    event.preventDefault();
-    if (this.isSubmitting) return;
+    event.preventDefault(); // Prevent the browser from reloading the page when the form is submitted.
+    if (this.isSubmitting) return; // Prevent duplicate API requests
 
     Utils.hideAlert(this.errorAlert);
     Utils.hideAlert(this.successAlert);
@@ -63,6 +61,7 @@ class CreateItemPage {
 
     this.#setSubmitting(true);
 
+    // Send the item data to the API and handle a successful response.
     try {
       const createdItem = await Api.createItem(values);
 
@@ -96,6 +95,8 @@ class CreateItemPage {
   #getValues() {
     const formData = new FormData(this.form);
     const getText = (name) => String(formData.get(name) ?? "").trim();
+
+    // Convert comma-separated color text into the array expected by the backend.
     const colors = getText("colors")
       .split(",")
       .map((color) => color.trim())
@@ -129,14 +130,16 @@ class CreateItemPage {
         values.colors.every((color) => color.length <= 20),
       location: Utils.isNonEmpty(values.location),
       description:
-        values.description !== null && values.description.length <= 2000,
+        values.description === null || values.description.length <= 2000,
     };
 
     Object.entries(results).forEach(([name, isValid]) => {
       this.#showFieldError(name, !isValid);
     });
 
-    const firstInvalidField = Object.keys(results).find((name) => !results[name]);
+    const firstInvalidField = Object.keys(results).find(
+      (name) => !results[name],
+    );
     if (firstInvalidField) {
       this.form.elements.namedItem(firstInvalidField)?.focus();
     }
@@ -160,19 +163,6 @@ class CreateItemPage {
   }
 
   /**
-   * Shows the selected photo name. The photo is not sent because the current
-   * backend endpoint only accepts JSON data.
-   */
-  #showPhotoFilename() {
-    const file = this.photoInput?.files?.[0];
-    if (this.photoFilename) {
-      this.photoFilename.textContent = file
-        ? `${file.name} (photo upload is not available yet)`
-        : "";
-    }
-  }
-
-  /**
    * Disables the button while the request is running to prevent duplicates.
    */
   #setSubmitting(isSubmitting) {
@@ -182,4 +172,6 @@ class CreateItemPage {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => new CreateItemPage().init());
+document.addEventListener("DOMContentLoaded", () =>
+  new CreateItemPage().init(),
+);
