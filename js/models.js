@@ -17,4 +17,29 @@ class Item {
         this.location = location;
         this.created_at = created_at;
     }
+
+    // URL to this item's details page
+    get detailsUrl() {
+        return `item-details.html?id=${this.id}`;
+    }
+
+    // Secondary line shown on the card (category + location)
+    get metaLine() {
+        return `${this.category} · ${this.location}`;
+    }
+
+    // CSS modifier class for the badge (appended after "badge ")
+    get badgeClass() {
+        return `badge-${this.type}`;
+    }
+
+    // Human-readable badge text ("Found" / "Lost")
+    get badgeLabel() {
+        return this.type === 'found' ? 'Found' : 'Lost';
+    }
+
+    // Image URL for the card thumbnail, if any
+    get imageUrl() {
+        return null; // placeholder
+    }
 }
