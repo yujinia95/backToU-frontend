@@ -1,3 +1,7 @@
+/**
+ * Item — wraps a raw item object from the API response (ItemResponse schema on the backend)
+ * so the rest of the frontend works with a consistent shape instead of raw fetch data.
+ */
 class Item {
     constructor({ id, user_id, type, status, date, title, description, category, colors, brand, location, created_at }) {
         this.id = id;
