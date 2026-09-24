@@ -54,7 +54,7 @@ class CardRenderer {
    * @returns {string} HTML for the image or placeholder.
    */  
   static imageMarkup(item, size = 32) {
-    if (!item.imageUrl) return CardRenderer.#placeholderIcon(size);
+    if (!item.imageUrl) return CardRenderer.#placeholder(size);
     return `<img src="${Utils.escapeHtml(item.imageUrl)}" alt="">`;
   }
 
@@ -67,14 +67,18 @@ class CardRenderer {
   }
 
   /**
-   * Creates a simple placeholder icon when an item has no image.
+   * Creates a placeholder when an item has no image, so the card says
+   * the photo has not been added instead of showing an empty box.
    *
    * @param {number} size - The icon size.
-   * @returns {string} SVG placeholder icon.
+   * @returns {string} HTML for the placeholder.
    */
-  static #placeholderIcon(size = 32) {
-    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-4-4 3-3-2-6 5"/>
-    </svg>`;
+  static #placeholder(size = 32) {
+    return `<div class="thumb-placeholder">
+      <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-4-4 3-3-2-6 5"/>
+      </svg>
+      <span>No photo added yet</span>
+    </div>`;
   }
 }

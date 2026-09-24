@@ -366,3 +366,16 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
   .app-header .search-bar{ display: none; }
   .app-header.has-mobile-search .search-bar-mobile{ display: flex; }
 }
+
+/* Shown inside a thumbnail area when an item has no photo yet. */
+.thumb-placeholder{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: var(--step-xs);
+}
