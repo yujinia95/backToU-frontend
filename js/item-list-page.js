@@ -60,7 +60,7 @@ class ItemListPage {
     }
 
     emptyCopy() {
-        return { title: 'Nothing matches that search', body: 'Try a different search term.' };
+        return { title: 'No items found', body: 'There are no items to show right now.' };
     }
 
     // ---- private ----------------------------------------------------

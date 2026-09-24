@@ -8,10 +8,12 @@ class FoundItemPage extends ItemListPage {
     async fetchItems(query) {
         const rawItems = await Api.getItems()
         const items = rawItems.map(data => new Item(data));
+        const normalizedQuery = query.toLowerCase();
 
         return items.filter(item => {
             const matchesType = item.type === 'found';
-            const matchesQuery = !query || item.title.toLowerCase().includes(query.toLowerCase());
+            const matchesQuery = !normalizedQuery || [item.title, item.location, item.category]
+                .some(value => value.toLowerCase().includes(normalizedQuery));
             return matchesType && matchesQuery;
         });
     }
