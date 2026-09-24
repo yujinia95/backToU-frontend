@@ -12,4 +12,12 @@ class Auth {
 
     return JSON.parse(storedUser);
   }
+
+  /**
+   * Logs out the current user and returns to the login page.
+   */
+  static logout() {
+    localStorage.removeItem("currentUser");
+    window.location.href = "login.html";
+  }
 }
