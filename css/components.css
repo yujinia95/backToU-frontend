@@ -135,6 +135,7 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
 .badge::before{ content:""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .badge-found{ background: var(--found-moss-bg); color: var(--found-moss); }
 .badge-lost{ background: var(--lost-rust-bg); color: var(--lost-rust); }
+.badge-returned{ background: var(--stone-100); color: var(--ink-muted); }
 
 /* ---------- Claim-tag card ---------- */
 .tag-card{
@@ -147,6 +148,8 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
   transition: border-color .15s ease, transform .15s ease;
 }
 .tag-card:hover{ border-color: var(--stone-500); transform: translateY(-2px); }
+
+.tag-card--muted{ opacity: 0.55; }
 
 .tag-card .tag-hole{
   position: absolute;
@@ -203,6 +206,20 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
 .tag-card .tag-perf{
   border-top: 1px dashed var(--border);
   margin: var(--space-3) 0;
+}
+
+.tag-card .tag-badges{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.tag-card .tag-posted{
+  font-size: var(--step-xs);
+  color: var(--ink-faint);
+  white-space: nowrap;
 }
 
 .card-grid{

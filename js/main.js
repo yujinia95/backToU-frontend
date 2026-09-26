@@ -28,7 +28,7 @@ class DashboardPage {
       const rawItems = await Api.getItems();
       const items = rawItems
         .map((data) => new Item(data))
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        .sort(Item.compareForDisplay);
 
       this.#renderSection(
         items.filter((item) => item.type === 'lost').slice(0, 4),

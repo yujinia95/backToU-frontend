@@ -54,11 +54,13 @@ class ItemListPage {
     async fetchItems(query) {
         const rawItems = await Api.getItems();
         const items = rawItems.map((data) => new Item(data));
-        return items.filter((item) => {
+        const filtered = items.filter((item) => {
             const matchesType = item.type === this.itemType;
             const matchesQuery = !query || item.title.toLowerCase().includes(query.toLowerCase());
             return matchesType && matchesQuery;
         });
+        // Active items first (most recent first), then returned items (most recent first).
+        return filtered.sort(Item.compareForDisplay);
     }
 
     countLabel(count) {

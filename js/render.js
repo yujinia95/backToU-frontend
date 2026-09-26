@@ -14,7 +14,7 @@ class CardRenderer {
    */
   static renderItemCard(item) {
     const el = document.createElement('a');
-    el.className = 'tag-card';
+    el.className = `tag-card${item.isReturned ? ' tag-card--muted' : ''}`;
     el.href = item.detailsUrl;
     el.innerHTML = `
       <span class="tag-hole"></span>
@@ -26,7 +26,11 @@ class CardRenderer {
         <div class="tag-meta">${Utils.escapeHtml(item.metaLine)}</div>
       </div>
       <div class="tag-perf"></div>
-      <span class="badge ${item.badgeClass}">${item.badgeLabel}</span>
+      <div class="tag-badges">
+        <span class="badge ${item.badgeClass}">${item.badgeLabel}</span>
+        ${item.isReturned ? `<span class="badge ${item.returnedBadgeClass}">${item.returnedBadgeLabel}</span>` : ''}
+        <span class="tag-posted">${Utils.escapeHtml(item.postedAgo)}</span>
+      </div>
     `;
     return el;
   }

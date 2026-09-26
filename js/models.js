@@ -40,6 +40,26 @@ class Item {
         return this.type === 'found' ? 'Found' : 'Lost';
     }
 
+    // Whether this item has already been returned to its owner
+    get isReturned() {
+        return this.status === 'returned';
+    }
+
+    // CSS modifier class for the "Returned" badge
+    get returnedBadgeClass() {
+        return 'badge-returned';
+    }
+
+    // Human-readable text for the "Returned" badge
+    get returnedBadgeLabel() {
+        return 'Returned';
+    }
+
+    // Relative description of how long ago this item was posted (e.g. "3 days ago")
+    get postedAgo() {
+        return Utils.formatRelativeTime(this.created_at);
+    }
+
     // Image URL for the card thumbnail, if any
     get imageUrl() {
         const thumbnail = this.images.find((image) => image.is_thumbnail);
@@ -53,5 +73,16 @@ class Item {
         const lastName = (this.poster.last_name || '').trim();
         const lastInitial = lastName ? `${lastName.charAt(0).toUpperCase()}.` : '';
         return [firstName, lastInitial].filter(Boolean).join(' ');
+    }
+
+    /**
+     * Comparator for displaying a list of items: active items first
+     * (most recent first), then returned items (most recent first).
+     * Shared by any page that lists items, so returned items always
+     * sink below active ones regardless of how recently they were posted.
+     */
+    static compareForDisplay(a, b) {
+        if (a.isReturned !== b.isReturned) return a.isReturned ? 1 : -1;
+        return new Date(b.created_at) - new Date(a.created_at);
     }
 }
