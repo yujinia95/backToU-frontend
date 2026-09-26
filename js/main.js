@@ -21,16 +21,40 @@ class DashboardPage {
    * Shows the user's greeting and loads the
    * recent lost and found items.
    */
-  init() {
+  async init() {
     this.#greetUser();
-    this.#loadSection(Api.getRecentLostItems(4), this.lostGrid, {
-      title: 'No lost reports yet',
-      body: 'When someone reports something lost, it will show up here.',
-    });
-    this.#loadSection(Api.getRecentFoundItems(4), this.foundGrid, {
-      title: 'No found items yet',
-      body: 'When someone turns something in, it will show up here.',
-    });
+
+    try {
+      const rawItems = await Api.getItems();
+      const items = rawItems
+        .map((data) => new Item(data))
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      this.#renderSection(
+        items.filter((item) => item.type === 'lost').slice(0, 4),
+        this.lostGrid,
+        {
+          title: 'No lost reports yet',
+          body: 'When someone reports something lost, it will show up here.',
+        },
+      );
+      this.#renderSection(
+        items.filter((item) => item.type === 'found').slice(0, 4),
+        this.foundGrid,
+        {
+          title: 'No found items yet',
+          body: 'When someone turns something in, it will show up here.',
+        },
+      );
+    } catch (error) {
+      console.error(error);
+      const errorCopy = {
+        title: 'Something went wrong',
+        body: 'Failed to load items. Please try again later.',
+      };
+      CardRenderer.renderEmptyState(this.lostGrid, errorCopy);
+      CardRenderer.renderEmptyState(this.foundGrid, errorCopy);
+    }
   }
 
   /**
@@ -54,15 +78,13 @@ class DashboardPage {
    * If there are no items, an empty-state message is shown.
    * Otherwise, each item is displayed as a card.
    */
-  #loadSection(promise, grid, emptyCopy) {
-    promise.then((items) => {
-      grid.innerHTML = '';
-      if (items.length === 0) {
-        CardRenderer.renderEmptyState(grid, emptyCopy);
-        return;
-      }
-      items.forEach((item) => grid.appendChild(CardRenderer.renderItemCard(item)));
-    });
+  #renderSection(items, grid, emptyCopy) {
+    grid.innerHTML = '';
+    if (items.length === 0) {
+      CardRenderer.renderEmptyState(grid, emptyCopy);
+      return;
+    }
+    items.forEach((item) => grid.appendChild(CardRenderer.renderItemCard(item)));
   }
 }
 

@@ -172,13 +172,6 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
 }
 .tag-card .tag-thumb img{ width: 100%; height: 100%; object-fit: cover; }
 
-.tag-card .tag-id{
-  font-family: var(--font-tag);
-  font-size: var(--step-xs);
-  color: var(--ink-faint);
-  margin-bottom: var(--space-1);
-}
-
 .tag-card h3{ font-size: var(--step-md); margin-bottom: 2px; padding-right: 24px; }
 
 .tag-card .tag-meta{
@@ -365,4 +358,17 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
 @media (max-width: 640px){
   .app-header .search-bar{ display: none; }
   .app-header.has-mobile-search .search-bar-mobile{ display: flex; }
+}
+
+/* Shown inside a thumbnail area when an item has no photo yet. */
+.thumb-placeholder{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: var(--step-xs);
 }
