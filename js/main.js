@@ -28,6 +28,7 @@ class DashboardPage {
       const rawItems = await Api.getItems();
       const items = rawItems
         .map((data) => new Item(data))
+        .filter((item) => !item.isReturned)
         .sort(Item.compareForDisplay);
 
       this.#renderSection(

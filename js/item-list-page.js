@@ -32,7 +32,8 @@ class ItemListPage {
         this.countEl.textContent = 'Loading\u2026';
         this.fetchItems(query)
             .then((items) => {
-                this.countEl.textContent = this.countLabel(items.length);
+                const returnedCount = items.filter((item) => item.isReturned).length;
+                this.countEl.textContent = this.countLabel(items.length, returnedCount);
                 if (items.length === 0) {
                     CardRenderer.renderEmptyState(this.grid, this.emptyCopy());
                     return;
@@ -63,8 +64,9 @@ class ItemListPage {
         return filtered.sort(Item.compareForDisplay);
     }
 
-    countLabel(count) {
-        return `${count} item${count === 1 ? '' : 's'}`;
+    countLabel(count, returnedCount = 0) {
+        const base = `${count} item${count === 1 ? '' : 's'}`;
+        return returnedCount > 0 ? `${base} (${returnedCount} returned)` : base;
     }
 
     emptyCopy() {
