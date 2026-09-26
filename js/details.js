@@ -53,7 +53,6 @@ class ItemDetailsPage {
         <div class="details-top">
           ${this.#gallery(item)}
           <div>
-            <div class="details-id">Item #${Utils.escapeHtml(item.id)}</div>
             <h1 class="details-title">${Utils.escapeHtml(item.title)}</h1>
             <span class="badge ${Utils.escapeHtml(item.badgeClass)}">
               ${Utils.escapeHtml(item.badgeLabel)}

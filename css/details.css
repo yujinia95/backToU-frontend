@@ -67,12 +67,6 @@
   object-fit: cover;
 }
 
-.details-id{
-  font-family: var(--font-tag);
-  font-size: var(--step-xs);
-  color: var(--ink-faint);
-  margin-bottom: var(--space-1);
-}
 .details-title{
   padding-right: 30px;
   margin-bottom: var(--space-2);
