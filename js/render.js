@@ -21,9 +21,10 @@ class CardRenderer {
       <div class="tag-thumb">
         ${CardRenderer.#resolveImage(item)}
       </div>
-      <div class="tag-id">${Utils.escapeHtml(item.id)}</div>
-      <h3>${Utils.escapeHtml(item.title)}</h3>
-      <div class="tag-meta">${Utils.escapeHtml(item.metaLine)}</div>
+      <div class="tag-info">
+        <h3>${Utils.escapeHtml(item.title)}</h3>
+        <div class="tag-meta">${Utils.escapeHtml(item.metaLine)}</div>
+      </div>
       <div class="tag-perf"></div>
       <span class="badge ${item.badgeClass}">${item.badgeLabel}</span>
     `;

@@ -172,22 +172,32 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
 }
 .tag-card .tag-thumb img{ width: 100%; height: 100%; object-fit: cover; }
 
-.tag-card .tag-id{
-  font-family: var(--font-tag);
-  font-size: var(--step-xs);
-  color: var(--ink-faint);
-  margin-bottom: var(--space-1);
+.tag-card .tag-info{
+  min-height: 92px;
 }
 
-.tag-card h3{ font-size: var(--step-md); margin-bottom: 2px; padding-right: 24px; }
+.tag-card h3{
+  font-size: var(--step-md);
+  line-height: 1.2;
+  margin-bottom: 2px;
+  padding-right: 24px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .tag-card .tag-meta{
   font-size: var(--step-xs);
+  line-height: 1.4;
   color: var(--ink-faint);
   margin-top: var(--space-2);
-  display: flex;
-  gap: var(--space-2);
-  align-items: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tag-card .tag-perf{
