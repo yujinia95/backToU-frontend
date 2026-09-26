@@ -49,6 +49,9 @@ class Item {
     // Display name for the user who posted the item
     get posterName() {
         if (!this.poster) return `User #${this.user_id}`;
-        return `${this.poster.first_name} ${this.poster.last_name}`.trim();
+        const firstName = (this.poster.first_name || '').trim();
+        const lastName = (this.poster.last_name || '').trim();
+        const lastInitial = lastName ? `${lastName.charAt(0).toUpperCase()}.` : '';
+        return [firstName, lastInitial].filter(Boolean).join(' ');
     }
 }
