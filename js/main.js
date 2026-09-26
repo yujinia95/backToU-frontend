@@ -64,7 +64,7 @@ class DashboardPage {
   #greetUser() {
     const user = Auth.getCurrentUser();
     if (this.greetingEl) {
-      this.greetingEl.textContent = user?.firstName ? `Welcome back, ${user.firstName}` : 'Recent activity';
+      this.greetingEl.textContent = user?.first_name ? `Welcome back, ${user.first_name}` : 'Recent activity';
     }
     if (this.subEl) {
       this.subEl.textContent = user

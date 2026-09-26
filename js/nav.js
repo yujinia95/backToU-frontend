@@ -76,9 +76,10 @@ class NavController {
       const nameEl = Utils.qs('[data-user-name]');
       const emailEl = Utils.qs('[data-user-email]');
       const avatarEl = Utils.qs('[data-user-avatar]');
-      if (nameEl) nameEl.textContent = user.fullName;
-      if (emailEl) emailEl.textContent = user.email || '';
-      if (avatarEl) avatarEl.textContent = user.initial;
+      const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ');
+      if (nameEl) nameEl.textContent = fullName || 'Signed in';
+      if (emailEl) emailEl.textContent = user.email ?? '';
+      if (avatarEl) avatarEl.textContent = user.first_name?.charAt(0).toUpperCase() || '?';
       return;
     }
 

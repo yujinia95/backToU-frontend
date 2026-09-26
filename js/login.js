@@ -2,6 +2,19 @@ class Login {
   static init() {
     const form = Utils.qs("#login-form");
     form.addEventListener("submit", Login.handleSubmit);
+    Login.showSignupSuccess();
+  }
+
+  /**
+   * Shows a confirmation message when arriving from a successful signup.
+   * Removes the query parameter so a page refresh doesn't show it again.
+   */
+  static showSignupSuccess() {
+    if (Utils.getParam("signup") !== "success") return;
+
+    const alertEl = Utils.qs("[data-form-alert]");
+    Utils.showAlert(alertEl, "Account created! Please log in.", "success");
+    history.replaceState(null, "", window.location.pathname);
   }
 
   static async handleSubmit(event) {
