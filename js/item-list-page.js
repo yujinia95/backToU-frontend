@@ -55,9 +55,11 @@ class ItemListPage {
     async fetchItems(query) {
         const rawItems = await Api.getItems();
         const items = rawItems.map((data) => new Item(data));
+        const normalizedQuery = query.toLowerCase();
         const filtered = items.filter((item) => {
             const matchesType = item.type === this.itemType;
-            const matchesQuery = !query || item.title.toLowerCase().includes(query.toLowerCase());
+            const matchesQuery = !normalizedQuery || [item.title, item.location, item.category]
+                .some((value) => value.toLowerCase().includes(normalizedQuery));
             return matchesType && matchesQuery;
         });
         // Active items first (most recent first), then returned items (most recent first).
@@ -80,7 +82,7 @@ class ItemListPage {
         if (this.searchInput) this.searchInput.value = query;
         if (this.mobileInput) this.mobileInput.value = query;
     }
-    
+
 }
 
 document.addEventListener('DOMContentLoaded', () => new ItemListPage().init());
