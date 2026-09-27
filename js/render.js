@@ -27,11 +27,33 @@ class CardRenderer {
       </div>
       <div class="tag-perf"></div>
       <div class="tag-badges">
-        <span class="badge ${item.badgeClass}">${item.badgeLabel}</span>
+        ${CardRenderer.badgeMarkup(item)}
         <span class="tag-posted">${Utils.escapeHtml(item.postedAgo)}</span>
       </div>
     `;
     return el;
+  }
+
+  /**
+   * Builds an item's status badge. Shared by the cards and the details page so
+   * a returned item is marked the same way wherever it appears.
+   *
+   * @param {Object} item - The item the badge describes.
+   * @returns {string} HTML for the badge.
+   */
+  static badgeMarkup(item) {
+    const icon = item.isReturned ? CardRenderer.#checkIcon() : '';
+    return `<span class="badge ${Utils.escapeHtml(item.badgeClass)}">${icon}${Utils.escapeHtml(item.badgeLabel)}</span>`;
+  }
+
+  /**
+   * Check mark used in place of the badge's dot on returned items.
+   * It sits beside the badge's own text, so it is hidden from screen readers.
+   */
+  static #checkIcon() {
+    return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2.8" stroke-linecap="round"
+      stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
   }
 
   /**

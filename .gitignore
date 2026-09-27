@@ -1,0 +1,6 @@
+# Local dev harness for previewing the image UI before the backend serves images
+dev-image-preview.html
+
+# Tooling output
+.playwright-mcp/
+.DS_Store

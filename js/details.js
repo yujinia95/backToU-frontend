@@ -45,24 +45,27 @@ class ItemDetailsPage {
     const brand = item.brand || 'Not specified';
     const description = item.description || 'No description provided.';
     const isOwner = Number(Auth.getCurrentUser()?.id) === Number(item.user_id);
+    const isReturned = item.isReturned;
 
     document.title = `BackToU: ${item.title}`;
     this.content.innerHTML = `
-      <article class="details-card">
-        <span class="tag-hole"></span>
+      <article class="details-card${isReturned ? ' details-card--returned' : ''}">
+        ${isReturned ? this.#closedBanner(item) : '<span class="tag-hole"></span>'}
         <div class="details-top">
           ${this.#gallery(item)}
           <div>
             <h1 class="details-title">${Utils.escapeHtml(item.title)}</h1>
-            <span class="badge ${Utils.escapeHtml(item.badgeClass)}">
-              ${Utils.escapeHtml(item.badgeLabel)}
-            </span>
+            ${CardRenderer.badgeMarkup(item)}
+            ${isReturned ? this.#timeline(item) : ''}
           </div>
         </div>
 
         <dl class="details-facts">
-          ${this.#fact('Status', this.#capitalize(item.status))}
-          ${this.#fact(dateLabel, this.#formatDate(item.date))}
+          ${isReturned
+            ? `${this.#fact(dateLabel, this.#formatDate(item.date))}
+               ${this.#fact('Returned on', Utils.formatDate(item.returned_at))}`
+            : `${this.#fact('Status', this.#capitalize(item.status))}
+               ${this.#fact(dateLabel, this.#formatDate(item.date))}`}
           ${this.#fact('Category', item.category)}
           ${this.#fact('Location', item.location)}
           ${this.#fact('Colors', colors)}
@@ -74,28 +77,125 @@ class ItemDetailsPage {
           <p>${Utils.escapeHtml(description)}</p>
         </section>
 
-        <div class="details-poster">
-          <div>
-            <span>Posted by</span>
-            <strong>${Utils.escapeHtml(item.posterName)}</strong>
-          </div>
-          ${isOwner ? '' : `
-            <button
-              type="button"
-              class="btn btn-primary"
-              data-message-poster
-              disabled
-              title="Messaging will be available soon"
-            >
-              Message poster
-            </button>
-          `}
-        </div>
+        ${this.#posterFooter(item, isOwner, isReturned)}
       </article>
     `;
 
     if (this.ownerActions) this.ownerActions.hidden = !isOwner;
     this.#connectGallery();
+  }
+
+  /**
+   * Full-width banner announcing the outcome. It sits above the photo so the
+   * closed state is the first thing read, not something found further down.
+   */
+  #closedBanner(item) {
+    const headline = `Returned to its owner on ${Utils.formatDate(item.returned_at)}`;
+
+    return `
+      <div class="details-closed-banner" role="status">
+        <span class="details-closed-mark" aria-hidden="true">${this.#checkIcon(22)}</span>
+        <div class="details-closed-copy">
+          <strong>${Utils.escapeHtml(headline)}</strong>
+          <span>This case is closed. Messaging is turned off for this post.</span>
+        </div>
+        <span class="details-case-label">Case closed</span>
+      </div>
+    `;
+  }
+
+  /**
+   * Two-step case history: when the item was reported, and when it came back.
+   * The return date and the duration are dropped when there is no timestamp.
+   */
+  #timeline(item) {
+    const returnedOn = Utils.formatDate(item.returned_at);
+    const resolved = item.resolvedLabel;
+
+    return `
+      <div class="details-timeline">
+        <div class="details-timeline-row">
+          <span class="details-timeline-dot" aria-hidden="true"></span>
+          <span class="details-timeline-label">${Utils.escapeHtml(item.reportedLabel)}</span>
+          <span class="details-timeline-date">${Utils.escapeHtml(this.#formatDate(item.date))}</span>
+        </div>
+        <span class="details-timeline-rail" aria-hidden="true"></span>
+        <div class="details-timeline-row details-timeline-row--done">
+          <span class="details-timeline-dot" aria-hidden="true"></span>
+          <span class="details-timeline-label">Returned to owner</span>
+          <span class="details-timeline-date">${Utils.escapeHtml(returnedOn)}</span>
+        </div>
+        ${resolved ? `<p class="details-timeline-foot">${Utils.escapeHtml(resolved)}</p>` : ''}
+      </div>
+    `;
+  }
+
+  /**
+   * Poster line plus whichever action still applies. A returned post cannot be
+   * messaged, so it points to the items that are still open instead.
+   */
+  #posterFooter(item, isOwner, isReturned) {
+    const activeListUrl = item.type === 'found' ? 'found-items.html' : 'lost-items.html';
+
+    let action = '';
+    if (isReturned) {
+      action = `
+        <div class="details-poster-actions">
+          <div class="details-messaging-closed">
+            ${this.#lockIcon()}
+            Messaging closed
+          </div>
+          <a class="btn btn-ghost details-returned-cta" href="${activeListUrl}">
+            Browse active items
+            ${this.#arrowIcon()}
+          </a>
+        </div>
+      `;
+    } else if (!isOwner) {
+      action = `
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-message-poster
+          disabled
+          title="Messaging will be available soon"
+        >
+          Message poster
+        </button>
+      `;
+    }
+
+    return `
+      <div class="details-poster">
+        <div>
+          <span>Posted by</span>
+          <strong>${Utils.escapeHtml(item.posterName)}</strong>
+        </div>
+        ${action}
+      </div>
+    `;
+  }
+
+  /**
+   * Decorative icons. Each sits beside its own text label, so they are
+   * hidden from assistive technology rather than given their own name.
+   */
+  #checkIcon(size = 16) {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2.6" stroke-linecap="round"
+      stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+  }
+
+  #lockIcon() {
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`;
+  }
+
+  #arrowIcon() {
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>`;
   }
 
   /**
