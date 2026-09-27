@@ -24,6 +24,16 @@
   --found-moss:   #4C6656;
   --found-moss-bg:#E4EAE2;
 
+  /* Returned: a cool blue, deliberately outside the warm stone range so a
+     closed case reads as a different kind of state, not a third category. */
+  --returned-bg:           #E6ECF3;
+  --returned-border:       #C9D5E3;
+  --returned-strong:       #3E5A78;
+  --returned-text:         #1F3348;
+  --returned-text-muted:   #3F5670;
+  --returned-label:        #34506E;
+  --returned-label-border: #9FB2C9;
+
   /* Semantic */
   --bg:          var(--stone-50);
   --surface:     var(--stone-0);

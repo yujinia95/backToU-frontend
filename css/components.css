@@ -136,6 +136,8 @@ input::placeholder, textarea::placeholder{ color: var(--ink-faint); }
 .badge-found{ background: var(--found-moss-bg); color: var(--found-moss); }
 .badge-lost{ background: var(--lost-rust-bg); color: var(--lost-rust); }
 .badge-returned{ background: var(--stone-100); color: var(--ink-muted); }
+/* The returned badge carries an inline check instead of the shared dot. */
+.badge-returned::before{ content: none; }
 
 /* ---------- Claim-tag card ---------- */
 .tag-card{
