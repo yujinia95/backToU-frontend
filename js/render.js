@@ -28,7 +28,6 @@ class CardRenderer {
       <div class="tag-perf"></div>
       <div class="tag-badges">
         <span class="badge ${item.badgeClass}">${item.badgeLabel}</span>
-        ${item.isReturned ? `<span class="badge ${item.returnedBadgeClass}">${item.returnedBadgeLabel}</span>` : ''}
         <span class="tag-posted">${Utils.escapeHtml(item.postedAgo)}</span>
       </div>
     `;

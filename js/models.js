@@ -30,29 +30,22 @@ class Item {
         return `${this.category} · ${this.location}`;
     }
 
-    // CSS modifier class for the badge (appended after "badge ")
+    // CSS modifier class for the badge (appended after "badge "). Returned items
+    // show a "Returned" badge in place of the usual Found/Lost one.
     get badgeClass() {
+        if (this.isReturned) return 'badge-returned';
         return `badge-${this.type}`;
     }
 
-    // Human-readable badge text ("Found" / "Lost")
+    // Human-readable badge text ("Found" / "Lost" / "Returned")
     get badgeLabel() {
+        if (this.isReturned) return 'Returned';
         return this.type === 'found' ? 'Found' : 'Lost';
     }
 
     // Whether this item has already been returned to its owner
     get isReturned() {
         return this.status === 'returned';
-    }
-
-    // CSS modifier class for the "Returned" badge
-    get returnedBadgeClass() {
-        return 'badge-returned';
-    }
-
-    // Human-readable text for the "Returned" badge
-    get returnedBadgeLabel() {
-        return 'Returned';
     }
 
     // Relative description of how long ago this item was posted (e.g. "3 days ago")
