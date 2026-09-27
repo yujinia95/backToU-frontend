@@ -1,12 +1,12 @@
 /**
  * item-list-page.js
  * Base class for any page that's a searchable grid of items
- * (found-items.html, lost-items.html). Subclasses only need to override
- * fetchItems(), countLabel(), and emptyCopy() — everything else
- * (wiring up both search bars, loading state, rendering) is shared here.
+ * (found-items.html, lost-items.html). Reads which type this page is for
+ * from <body data-item-type="found|lost">,
  */
 class ItemListPage {
     constructor() {
+        this.itemType = document.body.dataset.itemType;
         this.grid = Utils.qs('#item-grid');
         this.countEl = Utils.qs('#results-count');
         this.searchForm = Utils.qs('#search-form');
@@ -49,10 +49,16 @@ class ItemListPage {
             });
     }
 
-    // ---- overridden by subclasses ----------------------------------
 
-    fetchItems(_query) {
-        throw new Error('fetchItems() must be implemented by a subclass of ItemListPage');
+    /** Fetch all items and return only ones matching this page's type and the search query. */
+    async fetchItems(query) {
+        const rawItems = await Api.getItems();
+        const items = rawItems.map((data) => new Item(data));
+        return items.filter((item) => {
+            const matchesType = item.type === this.itemType;
+            const matchesQuery = !query || item.title.toLowerCase().includes(query.toLowerCase());
+            return matchesType && matchesQuery;
+        });
     }
 
     countLabel(count) {
@@ -63,8 +69,6 @@ class ItemListPage {
         return { title: 'No items found', body: 'There are no items to show right now.' };
     }
 
-    // ---- private ----------------------------------------------------
-
     #handleSearch(e, sourceInput) {
         e.preventDefault();
         const query = Utils.sanitizeText(sourceInput.value);
@@ -72,4 +76,7 @@ class ItemListPage {
         if (this.searchInput) this.searchInput.value = query;
         if (this.mobileInput) this.mobileInput.value = query;
     }
+    
 }
+
+document.addEventListener('DOMContentLoaded', () => new ItemListPage().init());
