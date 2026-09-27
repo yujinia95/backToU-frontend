@@ -14,17 +14,22 @@ class CardRenderer {
    */
   static renderItemCard(item) {
     const el = document.createElement('a');
-    el.className = 'tag-card';
+    el.className = `tag-card${item.isReturned ? ' tag-card--muted' : ''}`;
     el.href = item.detailsUrl;
     el.innerHTML = `
       <span class="tag-hole"></span>
       <div class="tag-thumb">
         ${CardRenderer.#resolveImage(item)}
       </div>
-      <h3>${Utils.escapeHtml(item.title)}</h3>
-      <div class="tag-meta">${Utils.escapeHtml(item.metaLine)}</div>
+      <div class="tag-info">
+        <h3>${Utils.escapeHtml(item.title)}</h3>
+        <div class="tag-meta">${Utils.escapeHtml(item.metaLine)}</div>
+      </div>
       <div class="tag-perf"></div>
-      <span class="badge ${item.badgeClass}">${item.badgeLabel}</span>
+      <div class="tag-badges">
+        <span class="badge ${item.badgeClass}">${item.badgeLabel}</span>
+        <span class="tag-posted">${Utils.escapeHtml(item.postedAgo)}</span>
+      </div>
     `;
     return el;
   }

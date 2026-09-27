@@ -79,7 +79,26 @@ class Utils {
     if (Number.isNaN(d.getTime())) return isoString;
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   }
-  
+
+  /**
+   * Converts an ISO date string into a relative description,
+   * based on calendar-day difference from today.
+   *
+   * Examples: "Today", "Yesterday", "3 days ago"
+   */
+  static formatRelativeTime(isoString) {
+    if (!isoString) return '';
+    const then = new Date(isoString);
+    if (Number.isNaN(then.getTime())) return '';
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfThen = new Date(then.getFullYear(), then.getMonth(), then.getDate());
+    const diffDays = Math.round((startOfToday - startOfThen) / 86400000);
+    if (diffDays <= 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    return `${diffDays} days ago`;
+  }
+
   /**
    * Gets a value from the URL query parameters.
    *
