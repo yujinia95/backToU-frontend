@@ -35,6 +35,35 @@ class CardRenderer {
   }
 
   /**
+   * Creates a card for an item suggested on the matches page.
+   * It is the normal item card with a "Strong match" label over the photo
+   * when the score is high, and the reasons it was suggested underneath.
+   * With neither, the card is left unchanged.
+   *
+   * @param {Match} match - The suggested item, its score, and its reasons.
+   * @returns {HTMLElement} The completed card element.
+   */
+  static renderMatchCard(match) {
+    const el = CardRenderer.renderItemCard(match.item);
+    if (match.isStrong) {
+      el.classList.add('tag-card--strong');
+      el.insertAdjacentHTML('afterbegin', '<span class="match-strong">Strong match</span>');
+    }
+
+    const labels = match.reasonLabels;
+    if (labels.length === 0) return el;
+
+    const reasons = labels
+      .map((label) => `<li class="match-reason">${CardRenderer.#checkIcon()}${Utils.escapeHtml(label)}</li>`)
+      .join('');
+    el.insertAdjacentHTML('beforeend', `
+      <div class="tag-perf"></div>
+      <ul class="match-reasons" aria-label="Why this was suggested">${reasons}</ul>
+    `);
+    return el;
+  }
+
+  /**
    * Builds an item's status badge. Shared by the cards and the details page so
    * a returned item is marked the same way wherever it appears.
    *

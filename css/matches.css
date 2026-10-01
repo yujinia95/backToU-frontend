@@ -1,27 +1,179 @@
-.report-pick-list{ display: flex; flex-direction: column; gap: var(--space-3); max-width: 560px; }
+/* ---------- Filters ---------- */
+.match-filters{ margin-bottom: var(--space-4); }
+.match-filters[hidden]{ display: none; }
+.match-filters .chip{
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.match-filters .chip:not(.is-active):hover{ border-color: var(--stone-500); color: var(--ink); }
+.chip-count{
+  font-family: var(--font-tag);
+  margin-left: var(--space-1);
+  opacity: .7;
+}
 
-.report-pick{
+/* ---------- One report and its suggestions ---------- */
+.match-group{ margin-bottom: var(--space-7); }
+.match-group:last-child{ margin-bottom: 0; }
+
+/* The user's own report. It sits on a flat stone panel instead of a claim-tag
+   card so it reads as the heading of the group, not as one more suggestion. */
+.match-source{
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--stone-100);
+  border-left: 3px solid var(--stone-300);
+  border-radius: var(--radius-sm);
+}
+.match-source--lost{ border-left-color: var(--lost-rust); }
+.match-source--found{ border-left-color: var(--found-moss); }
+
+.match-source-thumb{
+  flex: none;
+  width: 64px; height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--surface);
 }
-.report-pick-title{ font-weight: 600; margin-bottom: 2px; }
-.report-pick-meta{ font-size: var(--step-xs); color: var(--ink-faint); }
+.match-source-thumb img{ width: 100%; height: 100%; object-fit: cover; }
+/* Too small for the "No photo added yet" caption, so only the icon shows. */
+.match-source-thumb .thumb-placeholder span{ display: none; }
 
-.match-source{
+.match-source-body{ flex: 1 1 auto; min-width: 0; }
+
+.match-source-label{
+  font-family: var(--font-tag);
+  font-size: var(--step-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 2px;
+}
+.match-source--lost .match-source-label{ color: var(--lost-rust); }
+.match-source--found .match-source-label{ color: var(--found-moss); }
+
+.match-source-title{
+  font-size: var(--step-md);
+  line-height: 1.2;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.match-source-meta{
+  font-size: var(--step-xs);
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.match-source-link{
+  flex: none;
+  font-size: var(--step-sm);
+  font-weight: 600;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+.match-source-link:hover{ color: var(--ink); }
+
+.match-count{
+  font-family: var(--font-tag);
+  font-size: var(--step-xs);
+  color: var(--ink-faint);
+  margin-bottom: var(--space-4);
+}
+
+/* `.tag-card` sets its own display, which would otherwise beat `hidden`. */
+.match-group .tag-card[hidden]{ display: none; }
+
+/* ---------- High-scoring suggestion ---------- */
+/* The label sits over the photo's top-left corner (the tag hole has the
+   right), so titles stay lined up across a row whether or not a card has it. */
+.match-strong{
+  position: absolute;
+  top: calc(var(--space-4) + var(--space-2));
+  left: calc(var(--space-4) + var(--space-2));
+  z-index: 1;
+  padding: 3px 8px;
+  font-family: var(--font-tag);
+  font-size: var(--step-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--stone-0);
+  background: var(--ink);
+  border-radius: var(--radius-sm);
+}
+.tag-card--strong{ border-color: var(--stone-500); }
+
+/* ---------- Why a card was suggested ---------- */
+.match-reasons{
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.match-reason{
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 8px;
+  font-size: var(--step-xs);
+  font-weight: 500;
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.match-reason svg{ flex: none; color: var(--brass); }
+
+/* ---------- Report with nothing suggested yet ---------- */
+.match-none{
+  max-width: none;
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--step-sm);
+  color: var(--ink-muted);
+}
+
+.match-more{ margin-top: var(--space-4); }
+
+.match-empty-action{ margin-top: var(--space-4); }
+.empty-state p{ margin-inline: auto; }
+
+/* ---------- Loading ---------- */
+.match-skeleton-source,
+.match-skeleton-card{
   background: var(--stone-100);
   border-radius: var(--radius-sm);
-  padding: var(--space-4);
-  margin-bottom: var(--space-5);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
+  animation: match-pulse 1.2s ease-in-out infinite alternate;
 }
-.match-source-label{ font-size: var(--step-xs); color: var(--ink-faint); margin-bottom: 2px; }
+.match-skeleton-source{ height: 96px; margin-bottom: var(--space-4); }
+.match-skeleton-card{ aspect-ratio: 4/5; border-radius: var(--radius-tag); }
+
+@keyframes match-pulse{
+  from{ opacity: 1; }
+  to{ opacity: .5; }
+}
+
+@media (max-width: 560px){
+  .match-source{ flex-wrap: wrap; row-gap: var(--space-3); }
+  /* The thumb takes 64px plus the gap, the text takes the rest of the row. */
+  .match-source-body{ flex-basis: calc(100% - 64px - var(--space-4)); }
+  .match-source-title{
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .match-source-meta{ white-space: normal; }
+  .match-source-link{ width: 100%; }
+}
