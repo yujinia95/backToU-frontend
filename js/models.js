@@ -113,3 +113,54 @@ class Item {
         return new Date(b.created_at) - new Date(a.created_at);
     }
 }
+
+const MATCH_REASON_LABELS = {
+    category: 'Same category',
+    color: 'Same color',
+    brand: 'Same brand',
+    location: 'Near location',
+    date: 'Close date',
+};
+
+class Match {
+    constructor({ item, score, reasons }) {
+        this.item = new Item(item);
+        this.score = score;
+        this.reasons = reasons;
+    }
+
+    get isStrong() {
+        return this.score >= 70;
+    }
+
+    // Reason codes translated to display copy; unknown codes are dropped.
+    get reasonLabels() {
+        return this.reasons
+            .map((reason) => MATCH_REASON_LABELS[reason])
+            .filter(Boolean);
+    }
+}
+
+class MatchGroup {
+    constructor({ item, matches }) {
+        this.item = new Item(item);
+        this.matches = matches.map((match) => new Match(match));
+    }
+
+    get sourceLabel() {
+        return this.item.type === 'lost' ? 'Your lost report' : 'Your found report';
+    }
+
+    get countLabel() {
+        const count = this.matches.length;
+        return count === 1 ? '1 possible match' : `${count} possible matches`;
+    }
+
+    // Groups with matches sort first; ties break by the report's own recency.
+    static compareForDisplay(a, b) {
+        const aHasMatches = a.matches.length > 0;
+        const bHasMatches = b.matches.length > 0;
+        if (aHasMatches !== bHasMatches) return aHasMatches ? -1 : 1;
+        return new Date(b.item.created_at) - new Date(a.item.created_at);
+    }
+}
