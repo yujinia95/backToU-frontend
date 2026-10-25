@@ -72,4 +72,8 @@ class Api {
       method: "DELETE",
     });
   }
+  
+  static async getMatches(userId) {
+    return this.request(`/users/${userId}/matches`);
+  }
 }
