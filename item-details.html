@@ -63,7 +63,7 @@
     <div class="details-actions" data-owner-actions hidden>
       <a class="btn btn-ghost" data-edit-item>Edit</a>
       <button type="button" class="btn btn-primary" data-resolve-item>Mark as resolved</button>
-      <button type="button" class="btn btn-danger" data-delete-item disabled title="Deleting will be available soon">Delete post</button>
+      <button type="button" class="btn btn-danger" data-delete-item>Delete post</button>
     </div>
 
     <dialog class="confirm-dialog" data-resolve-confirm aria-labelledby="resolve-confirm-title">
@@ -78,6 +78,22 @@
         <div class="confirm-dialog-actions">
           <button type="submit" value="cancel" class="btn btn-ghost">Cancel</button>
           <button type="submit" value="confirm" class="btn btn-primary">Yes, mark as returned</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="confirm-dialog" data-delete-confirm aria-labelledby="delete-confirm-title">
+      <form method="dialog" class="confirm-dialog-body">
+        <h2 class="confirm-dialog-title" id="delete-confirm-title">Delete this post?</h2>
+        <p class="confirm-dialog-copy">
+          This removes the post for everyone.
+        </p>
+        <p class="confirm-dialog-copy">
+          It cannot be undone.
+        </p>
+        <div class="confirm-dialog-actions">
+          <button type="submit" value="cancel" class="btn btn-ghost">Cancel</button>
+          <button type="submit" value="confirm" class="btn btn-danger">Yes, delete</button>
         </div>
       </form>
     </dialog>

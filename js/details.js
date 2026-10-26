@@ -8,6 +8,8 @@ class ItemDetailsPage {
     this.resolveButton = Utils.qs('[data-resolve-item]');
     this.editLink = Utils.qs('[data-edit-item]');
     this.resolveConfirm = Utils.qs('[data-resolve-confirm]');
+    this.deleteButton = Utils.qs('[data-delete-item]');
+    this.deleteConfirm = Utils.qs('[data-delete-confirm]');
     this.item = null; // The item on this page, kept so button handlers can use it
   }
 
@@ -15,7 +17,8 @@ class ItemDetailsPage {
    * Validates the item id, fetches the item, and renders its details.
    */
   async init() {
-    this.resolveButton?.addEventListener('click', () => this.#handleResolve()); 
+    this.resolveButton?.addEventListener('click', () => this.#handleResolve());
+    this.deleteButton?.addEventListener('click', () => this.#handleDelete());
     if (!this.content) return;
 
     const itemId = Utils.getParam('id');
@@ -39,7 +42,7 @@ class ItemDetailsPage {
    */
   async #handleResolve() {
     if (!this.item) return;
-    if (!await this.#confirmResolve()) return;
+    if (!await this.#confirm(this.resolveConfirm)) return;
 
     // Block double clicks while the request is in progress
     this.resolveButton.disabled = true;
@@ -58,16 +61,34 @@ class ItemDetailsPage {
   }
 
   /**
-   * Asks the owner to confirm before the post is closed. True only when they
-   * pick the confirming button: Escape, Cancel, and a click outside all leave
-   * the post untouched.
+   * Deletes the post and leaves for the dashboard, since the page it was
+   * showing no longer exists.
    */
-  async #confirmResolve() {
-    this.resolveConfirm.showModal();
+  async #handleDelete() {
+    if (!this.item) return;
+    if (!await this.#confirm(this.deleteConfirm)) return;
+
+    this.deleteButton.disabled = true;
+
+    try {
+      await Api.deleteItem(this.item.id);
+      window.location.replace('main.html');
+    } catch (error) {
+      alert(error?.message || 'Unable to delete this post. Please try again.');
+      this.deleteButton.disabled = false;
+    }
+  }
+
+  /**
+   * Opens one of the confirm dialogs. True only when the owner picks the
+   * confirming button: Escape, Cancel, and a click outside all answer no.
+   */
+  async #confirm(dialog) {
+    dialog.showModal();
     await new Promise((close) => {
-      this.resolveConfirm.addEventListener('close', close, { once: true });
+      dialog.addEventListener('close', close, { once: true });
     });
-    return this.resolveConfirm.returnValue === 'confirm';
+    return dialog.returnValue === 'confirm';
   }
 
   /**
