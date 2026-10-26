@@ -62,9 +62,25 @@
 
     <div class="details-actions" data-owner-actions hidden>
       <button type="button" class="btn btn-ghost" data-edit-item disabled title="Editing will be available soon">Edit</button>
-      <button type="button" class="btn btn-primary" data-resolve-item disabled title="Status updates will be available soon">Mark as resolved</button>
+      <button type="button" class="btn btn-primary" data-resolve-item>Mark as resolved</button>
       <button type="button" class="btn btn-danger" data-delete-item disabled title="Deleting will be available soon">Delete post</button>
     </div>
+
+    <dialog class="confirm-dialog" data-resolve-confirm aria-labelledby="resolve-confirm-title">
+      <form method="dialog" class="confirm-dialog-body">
+        <h2 class="confirm-dialog-title" id="resolve-confirm-title">Mark this item as returned?</h2>
+        <p class="confirm-dialog-copy">
+          This closes the post and turns off messaging.
+        </p>
+        <p class="confirm-dialog-copy">
+          It cannot be undone.
+        </p>
+        <div class="confirm-dialog-actions">
+          <button type="submit" value="cancel" class="btn btn-ghost">Cancel</button>
+          <button type="submit" value="confirm" class="btn btn-primary">Yes, mark as returned</button>
+        </div>
+      </form>
+    </dialog>
   </div>
 </main>
 
