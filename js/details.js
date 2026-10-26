@@ -6,6 +6,7 @@ class ItemDetailsPage {
     this.content = Utils.qs('#details-content');
     this.ownerActions = Utils.qs('[data-owner-actions]');
     this.resolveButton = Utils.qs('[data-resolve-item]');
+    this.editLink = Utils.qs('[data-edit-item]');
     this.resolveConfirm = Utils.qs('[data-resolve-confirm]');
     this.item = null; // The item on this page, kept so button handlers can use it
   }
@@ -123,6 +124,11 @@ class ItemDetailsPage {
 
     if (this.ownerActions) this.ownerActions.hidden = !isOwner;
     if (this.resolveButton) this.resolveButton.hidden = isReturned;
+    // A returned post is a closed record, so it is no longer editable.
+    if (this.editLink) {
+      this.editLink.hidden = isReturned;
+      this.editLink.href = `create-item.html?id=${item.id}`;
+    }
     this.#connectGallery();
   }
 

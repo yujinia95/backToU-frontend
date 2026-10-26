@@ -1,8 +1,9 @@
 /**
- * Controls the create-item form.
+ * Controls the item form, which posts a new item or edits an existing one.
  *
- * Reads and validates the form values, sends a valid item to the API,
- * and shows the user whether the request succeeded or failed.
+ * An "id" in the page URL puts the form in editing mode: it loads that item,
+ * fills the fields in, and saves with PATCH instead of POST. Everything else
+ * — validation, error display, the field markup — is shared by both modes.
  */
 class CreateItemPage {
   constructor() {
@@ -13,14 +14,22 @@ class CreateItemPage {
     this.submitButton = Utils.qs('[type="submit"]', this.form);
     this.buttonLabel = Utils.qs("[data-btn-label]", this.form);
 
+    this.itemId = Utils.getParam("id"); // Present only when editing an item
     this.currentUser = null; // Stores the logged-in user after init()
     this.isSubmitting = false; // Prevents the form from being submitted twice
   }
 
   /**
+   * Whether the form is editing an existing item rather than posting a new one.
+   */
+  get isEditing() {
+    return Boolean(this.itemId);
+  }
+
+  /**
    * Checks that a user is logged in and connects the form events.
    */
-  init() {
+  async init() {
     if (!this.form) return;
 
     // Redirect to login because creating an item requires a logged-in user's ID.
@@ -29,6 +38,8 @@ class CreateItemPage {
       window.location.href = "login.html";
       return;
     }
+
+    if (this.isEditing && !(await this.#loadForEditing())) return;
 
     this.form.addEventListener("submit", (event) => this.handleSubmit(event));
 
@@ -63,16 +74,20 @@ class CreateItemPage {
 
     // Send the item data to the API and handle a successful response.
     try {
-      const createdItem = await Api.createItem(values);
+      const savedItem = this.isEditing
+        ? await Api.patchItem(this.itemId, values)
+        : await Api.createItem(values);
 
       Utils.showAlert(
         this.successAlert,
-        "Your item was posted successfully. Redirecting…",
+        this.isEditing
+          ? "Your changes were saved. Redirecting…"
+          : "Your item was posted successfully. Redirecting…",
         "success",
       );
 
-      const destination = createdItem?.id
-        ? `item-details.html?id=${encodeURIComponent(createdItem.id)}`
+      const destination = savedItem?.id
+        ? `item-details.html?id=${encodeURIComponent(savedItem.id)}`
         : "main.html";
 
       window.setTimeout(() => {
@@ -90,6 +105,54 @@ class CreateItemPage {
   }
 
   /**
+   * Loads the item being edited and fills the form with it. Returns false when
+   * the form must not be used: someone else's post, or one that is already
+   * closed, both of which send the visitor back to the details page.
+   */
+  async #loadForEditing() {
+    let item;
+    try {
+      item = new Item(await Api.getItem(this.itemId));
+    } catch (error) {
+      Utils.showAlert(this.errorAlert, error?.message || "Unable to load this item.");
+      this.submitButton.disabled = true;
+      return false;
+    }
+
+    // A returned post is a closed record, so its details stay as they were.
+    if (Number(item.user_id) !== Number(this.currentUser.id) || item.isReturned) {
+      window.location.replace(item.detailsUrl);
+      return false;
+    }
+
+    this.#fillForm(item);
+
+    document.title = `BackToU: Edit ${item.title}`;
+    Utils.qs("[data-form-heading]").textContent = "Edit your post";
+    Utils.qs("[data-form-sub]").textContent =
+      "Update what you reported. The more specific the description and location, the easier it is to match.";
+    Utils.qs("[data-form-cancel]").href = item.detailsUrl;
+    this.#setSubmitting(false); // Puts "Save changes" on the button
+    return true;
+  }
+
+  /**
+   * Writes an item's values into the form fields.
+   */
+  #fillForm(item) {
+    const fields = this.form.elements;
+
+    fields.type.value = item.type;
+    fields.title.value = item.title;
+    fields.category.value = item.category;
+    fields.date.value = item.date;
+    fields.brand.value = item.brand ?? "";
+    fields.colors.value = item.colors.join(", ");
+    fields.location.value = item.location;
+    fields.description.value = item.description ?? "";
+  }
+
+  /**
    * Reads the form values and converts them to the backend request format.
    */
   #getValues() {
@@ -103,7 +166,8 @@ class CreateItemPage {
       .filter(Boolean);
 
     return {
-      user_id: this.currentUser.id,
+      // The owner of a post never changes, so it is only sent when creating one.
+      ...(this.isEditing ? {} : { user_id: this.currentUser.id }),
       type: getText("type"),
       date: getText("date"),
       title: getText("title"),
@@ -145,7 +209,7 @@ class CreateItemPage {
     }
 
     const hasValidUserId =
-      Number.isInteger(values.user_id) && values.user_id > 0;
+      this.isEditing || (Number.isInteger(values.user_id) && values.user_id > 0);
     const hasValidType = ["lost", "found"].includes(values.type);
 
     return firstInvalidField === undefined && hasValidUserId && hasValidType;
@@ -168,7 +232,11 @@ class CreateItemPage {
   #setSubmitting(isSubmitting) {
     this.isSubmitting = isSubmitting;
     this.submitButton.disabled = isSubmitting;
-    this.buttonLabel.textContent = isSubmitting ? "Posting…" : "Post item";
+    if (this.isEditing) {
+      this.buttonLabel.textContent = isSubmitting ? "Saving…" : "Save changes";
+    } else {
+      this.buttonLabel.textContent = isSubmitting ? "Posting…" : "Post item";
+    }
   }
 }
 
