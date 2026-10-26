@@ -5,12 +5,15 @@ class ItemDetailsPage {
   constructor() {
     this.content = Utils.qs('#details-content');
     this.ownerActions = Utils.qs('[data-owner-actions]');
+    this.resolveButton = Utils.qs('[data-resolve-item]');
+    this.item = null; // The item on this page, kept so button handlers can use it
   }
 
   /**
    * Validates the item id, fetches the item, and renders its details.
    */
   async init() {
+    this.resolveButton?.addEventListener('click', () => this.#handleResolve()); 
     if (!this.content) return;
 
     const itemId = Utils.getParam('id');
@@ -21,11 +24,33 @@ class ItemDetailsPage {
 
     try {
       const data = await Api.getItem(itemId);
-      const item = new Item(data);
-      this.#renderItem(item);
+      this.item = new Item(data);
+      this.#renderItem(this.item);
     } catch (error) {
       const message = error?.message || 'Unable to load this item. Please try again later.';
       this.#renderError('Unable to load item', message);
+    }
+  }
+
+  /**
+   * Marks the item as returned, then redraws the page with the updated item.
+   */
+  async #handleResolve() {
+    if (!this.item) return;
+
+    // Block double clicks while the request is in progress
+    this.resolveButton.disabled = true;
+
+    try {
+      const data = await Api.patchItem(this.item.id, { status: 'returned' });
+      // PATCH returns ItemResponse, which carries no poster. Keep the one the
+      // detail request already gave us so the poster name does not fall back
+      // to "User #id" after the update.
+      this.item = new Item({ ...data, poster: this.item.poster });
+      this.#renderItem(this.item);
+    } catch (error) {
+      alert(error?.message || 'Unable to update this item. Please try again.');
+      this.resolveButton.disabled = false;
     }
   }
 
@@ -82,6 +107,7 @@ class ItemDetailsPage {
     `;
 
     if (this.ownerActions) this.ownerActions.hidden = !isOwner;
+    if (this.resolveButton) this.resolveButton.hidden = isReturned;
     this.#connectGallery();
   }
 

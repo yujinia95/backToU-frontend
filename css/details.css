@@ -259,6 +259,7 @@
   margin-top: var(--space-5);
 }
 .details-actions[hidden]{ display: none; }
+.details-actions .btn[hidden]{ display: none; }
 .details-actions .btn:disabled{
   cursor: not-allowed;
   opacity: .55;
