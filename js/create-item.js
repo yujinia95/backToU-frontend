@@ -166,8 +166,6 @@ class CreateItemPage {
       .filter(Boolean);
 
     return {
-      // The owner of a post never changes, so it is only sent when creating one.
-      ...(this.isEditing ? {} : { user_id: this.currentUser.id }),
       type: getText("type"),
       date: getText("date"),
       title: getText("title"),
@@ -208,11 +206,9 @@ class CreateItemPage {
       this.form.elements.namedItem(firstInvalidField)?.focus();
     }
 
-    const hasValidUserId =
-      this.isEditing || (Number.isInteger(values.user_id) && values.user_id > 0);
     const hasValidType = ["lost", "found"].includes(values.type);
 
-    return firstInvalidField === undefined && hasValidUserId && hasValidType;
+    return firstInvalidField === undefined && hasValidType;
   }
 
   /**

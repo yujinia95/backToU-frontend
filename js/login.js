@@ -43,7 +43,8 @@ class Login {
     }
 
     try {
-      const user = await Api.login({ email, password });
+      const { access_token, user } = await Api.login({ email, password });
+      localStorage.setItem("access_token", access_token);
       localStorage.setItem("currentUser", JSON.stringify(user));
       window.location.href = "main.html";
     } catch (error) {

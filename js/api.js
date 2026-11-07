@@ -5,11 +5,30 @@ class Api {
   /**
    * Send an HTTP request to the API and return the parsed JSON.
    * Returns null for 204 responses.
+   * Adds the token for requests marked authRequired and logs out on their 401 responses.
    * Throws an Error with the server's message when the response fails.
    */
   static async request(path, options = {}) {
-    // Build the full URL from BASE_URL + path, then send the request.
-    const response = await fetch(`${this.BASE_URL}${path}`, options);
+    const { authRequired = false, ...fetchOptions } = options;
+    const headers = new Headers(fetchOptions.headers);
+
+    if (authRequired) {
+      const token = Auth.getAccessToken();
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+    }
+
+    const response = await fetch(`${this.BASE_URL}${path}`, {
+      ...fetchOptions,
+      headers,
+    });
+
+    if (authRequired && response.status === 401) {
+      Auth.logout();
+      throw new Error("Please log in to continue.");
+    }
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -45,6 +64,7 @@ class Api {
 
   static async createItem(data) {
     return this.request("/items", {
+      authRequired: true,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -61,6 +81,7 @@ class Api {
 
   static async patchItem(id, data) {
     return this.request(`/items/${id}`, {
+      authRequired: true,
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -69,11 +90,14 @@ class Api {
 
   static async deleteItem(id) {
     return this.request(`/items/${id}`, {
+      authRequired: true,
       method: "DELETE",
     });
   }
   
-  static async getMatches(userId) {
-    return this.request(`/users/${userId}/matches`);
+  static async getMatches() {
+    return this.request("/users/matches", {
+      authRequired: true,
+    });
   }
 }

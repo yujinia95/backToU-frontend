@@ -39,7 +39,7 @@ class MatchesPage {
     this.#renderLoading();
 
     try {
-      const rawGroups = await Api.getMatches(user.id);
+      const rawGroups = await Api.getMatches();
       // A returned report is a closed case, so it no longer needs suggestions.
       this.groups = rawGroups
         .map((data) => new MatchGroup(data))
