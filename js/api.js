@@ -13,7 +13,7 @@ class Api {
     const headers = new Headers(fetchOptions.headers);
 
     if (authRequired) {
-      const token = Auth.getAccessToken();
+      const token = Auth.getToken();
 
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);

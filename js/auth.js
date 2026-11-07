@@ -16,7 +16,7 @@ class Auth {
   /**
    * Gets the access token used for authenticated API requests.
    */
-  static getAccessToken() {
+  static getToken() {
     return localStorage.getItem("access_token");
   }
 
