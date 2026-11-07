@@ -14,9 +14,17 @@ class Auth {
   }
 
   /**
+   * Gets the access token used for authenticated API requests.
+   */
+  static getAccessToken() {
+    return localStorage.getItem("access_token");
+  }
+
+  /**
    * Logs out the current user and returns to the login page.
    */
   static logout() {
+    localStorage.removeItem("access_token");
     localStorage.removeItem("currentUser");
     window.location.href = "login.html";
   }
