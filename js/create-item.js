@@ -54,10 +54,14 @@ class CreateItemPage {
 
     this.form.addEventListener("submit", (event) => this.handleSubmit(event));
 
-    // Add an event listener to every input field in the form.
+    // Add an event listener to every backend-submitted field.
     // After a failed submission, when the user edits a field,
     // remove that field's error style and hide the form-level error message.
+    // The photo input is excluded: it has no `name` (it isn't part of the
+    // values sent to Api.createItem/patchItem) and manages its own error
+    // state in #handlePhotoSelect, so #showFieldError does not apply to it.
     Utils.qsa("input, select, textarea", this.form).forEach((field) => {
+      if (field === this.photoInput) return;
       field.addEventListener("input", () => {
         this.#showFieldError(field.name, false);
         Utils.hideAlert(this.errorAlert);
