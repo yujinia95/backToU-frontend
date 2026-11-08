@@ -3,7 +3,7 @@
  * so the rest of the frontend works with a consistent shape instead of raw fetch data.
  */
 class Item {
-    constructor({ id, user_id, type, status, date, title, description, category, colors, brand, location, created_at, returned_at = null, poster = null, images = [] }) {
+    constructor({ id, user_id, type, status, date, title, description, category, colors, brand, location, created_at, returned_at = null, poster = null, photo_url = null }) {
         this.id = id;
         this.user_id = user_id;
         this.type = type;
@@ -18,7 +18,7 @@ class Item {
         this.created_at = created_at;
         this.returned_at = returned_at;
         this.poster = poster;
-        this.images = Array.isArray(images) ? images.slice(0, 5) : [];
+        this.photo_url = photo_url;
     }
 
     // URL to this item's details page
@@ -89,8 +89,7 @@ class Item {
 
     // Image URL for the card thumbnail, if any
     get imageUrl() {
-        const thumbnail = this.images.find((image) => image.is_thumbnail);
-        return thumbnail?.url || this.images[0]?.url || null;
+        return this.photo_url;
     }
 
     // Display name for the user who posted the item

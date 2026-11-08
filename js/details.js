@@ -10,6 +10,7 @@ class ItemDetailsPage {
     this.resolveConfirm = Utils.qs('[data-resolve-confirm]');
     this.deleteButton = Utils.qs('[data-delete-item]');
     this.deleteConfirm = Utils.qs('[data-delete-confirm]');
+    this.photoAlert = Utils.qs('[data-photo-alert]');
     this.item = null; // The item on this page, kept so button handlers can use it
   }
 
@@ -25,6 +26,13 @@ class ItemDetailsPage {
     if (!this.#isValidId(itemId)) {
       this.#renderError('Invalid item', 'The item link is missing a valid id.');
       return;
+    }
+
+    if (Utils.getParam('photo_error')) {
+      Utils.showAlert(
+        this.photoAlert,
+        'Your item was posted, but the photo failed to upload. Use "Edit" below to try again.',
+      );
     }
 
     try {
@@ -142,6 +150,7 @@ class ItemDetailsPage {
         ${this.#posterFooter(item, isOwner, isReturned)}
       </article>
     `;
+    Photo.renderPhoto(Utils.qs('.item-photo', this.content), item.imageUrl);
 
     if (this.ownerActions) this.ownerActions.hidden = !isOwner;
     if (this.resolveButton) this.resolveButton.hidden = isReturned;
@@ -150,7 +159,6 @@ class ItemDetailsPage {
       this.editLink.hidden = isReturned;
       this.editLink.href = `create-item.html?id=${item.id}`;
     }
-    this.#connectGallery();
   }
 
   /**
@@ -267,68 +275,16 @@ class ItemDetailsPage {
   }
 
   /**
-   * Creates a large image area and up to five selectable thumbnails.
-   * The placeholder remains visible until the API provides image data.
+   * Creates the item's photo area. Shows a placeholder until the item has a photo.
    */
   #gallery(item) {
-    if (item.images.length === 0) {
-      return `
-        <div class="details-gallery">
-          <div class="details-thumb">
-            ${CardRenderer.imageMarkup(item, 80)}
-          </div>
-        </div>
-      `;
-    }
-
-    const selectedImage = item.images.find((image) => image.is_thumbnail) || item.images[0];
-    const thumbnails = item.images.map((image) => `
-      <button
-        type="button"
-        class="details-thumbnail${image === selectedImage ? ' is-selected' : ''}"
-        data-gallery-thumbnail
-        data-image-url="${Utils.escapeHtml(image.url)}"
-        aria-label="View another photo of ${Utils.escapeHtml(item.title)}"
-        aria-pressed="${image === selectedImage}"
-      >
-        <img src="${Utils.escapeHtml(image.url)}" alt="">
-      </button>
-    `).join('');
-
     return `
       <div class="details-gallery">
         <div class="details-thumb">
-          <img
-            src="${Utils.escapeHtml(selectedImage.url)}"
-            alt="${Utils.escapeHtml(item.title)}"
-            data-gallery-main
-          >
-        </div>
-        <div class="details-thumbnails" aria-label="Item photos">
-          ${thumbnails}
+          ${CardRenderer.imageMarkup()}
         </div>
       </div>
     `;
-  }
-
-  /**
-   * Changes the large image when a thumbnail is selected.
-   */
-  #connectGallery() {
-    const mainImage = Utils.qs('[data-gallery-main]', this.content);
-    if (!mainImage) return;
-
-    Utils.qsa('[data-gallery-thumbnail]', this.content).forEach((button) => {
-      button.addEventListener('click', () => {
-        mainImage.src = button.dataset.imageUrl;
-
-        Utils.qsa('[data-gallery-thumbnail]', this.content).forEach((thumbnail) => {
-          const isSelected = thumbnail === button;
-          thumbnail.classList.toggle('is-selected', isSelected);
-          thumbnail.setAttribute('aria-pressed', String(isSelected));
-        });
-      });
-    });
   }
 
   /**

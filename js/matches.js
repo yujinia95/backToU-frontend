@@ -125,6 +125,7 @@ class MatchesPage {
     const section = document.createElement('section');
     section.className = 'match-group';
     section.innerHTML = this.#sourceMarkup(group);
+    Photo.renderPhoto(Utils.qs('.item-photo', section), group.item.imageUrl);
 
     if (group.matches.length === 0) {
       section.insertAdjacentHTML('beforeend', `
@@ -156,7 +157,7 @@ class MatchesPage {
 
     return `
       <div class="match-source match-source--${Utils.escapeHtml(item.type)}">
-        <div class="match-source-thumb">${CardRenderer.imageMarkup(item, 24)}</div>
+        <div class="match-source-thumb">${CardRenderer.imageMarkup()}</div>
         <div class="match-source-body">
           <div class="match-source-label">${Utils.escapeHtml(group.sourceLabel)}</div>
           <h2 class="match-source-title">${Utils.escapeHtml(item.title)}</h2>

@@ -19,7 +19,7 @@ class CardRenderer {
     el.innerHTML = `
       <span class="tag-hole"></span>
       <div class="tag-thumb">
-        ${CardRenderer.#resolveImage(item)}
+        ${CardRenderer.imageMarkup({ lazy: true })}
       </div>
       <div class="tag-info">
         <h3>${Utils.escapeHtml(item.title)}</h3>
@@ -31,6 +31,7 @@ class CardRenderer {
         <span class="tag-posted">${Utils.escapeHtml(item.postedAgo)}</span>
       </div>
     `;
+    Photo.renderPhoto(Utils.qs('.item-photo', el), item.imageUrl);
     return el;
   }
 
@@ -101,39 +102,14 @@ class CardRenderer {
   }
 
   /**
-   * Creates HTML for an item's image.
-   * If the item has no image, a placeholder icon is used instead.
+   * Creates the <img> used for an item's photo. The caller is responsible
+   * for wiring it up with Photo.renderPhoto once it is in the DOM.
    *
-   * @param {Object} item - The item containing the image URL.
-   * @param {number} size - The image size.
-   * @returns {string} HTML for the image or placeholder.
-   */  
-  static imageMarkup(item, size = 32) {
-    if (!item.imageUrl) return CardRenderer.#placeholder(size);
-    return `<img src="${Utils.escapeHtml(item.imageUrl)}" alt="">`;
-  }
-
-  /**
-   * Gets the image HTML used by an item card.
-   * Cards use a small 32px image.
+   * @param {Object} options
+   * @param {boolean} options.lazy - Whether the image should load lazily.
+   * @returns {string} HTML for the image.
    */
-  static #resolveImage(item) {
-    return CardRenderer.imageMarkup(item, 32);
-  }
-
-  /**
-   * Creates a placeholder when an item has no image, so the card says
-   * the photo has not been added instead of showing an empty box.
-   *
-   * @param {number} size - The icon size.
-   * @returns {string} HTML for the placeholder.
-   */
-  static #placeholder(size = 32) {
-    return `<div class="thumb-placeholder">
-      <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-4-4 3-3-2-6 5"/>
-      </svg>
-      <span>No photo added yet</span>
-    </div>`;
+  static imageMarkup({ lazy = false } = {}) {
+    return `<img class="item-photo" alt=""${lazy ? ' loading="lazy"' : ''}>`;
   }
 }

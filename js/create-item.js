@@ -17,6 +17,14 @@ class CreateItemPage {
     this.itemId = Utils.getParam("id"); // Present only when editing an item
     this.currentUser = null; // Stores the logged-in user after init()
     this.isSubmitting = false; // Prevents the form from being submitted twice
+
+    this.photoField = Utils.qs('[data-field="photo"]', this.form);
+    this.photoInput = Utils.qs("[data-photo-input]", this.form);
+    this.photoPreview = Utils.qs("[data-photo-preview]", this.form);
+    this.photoError = Utils.qs("[data-photo-error]", this.form);
+    this.selectedPhoto = null; // File chosen for upload, or null when posting/saving without a new one
+    this.previewUrl = null; // Object URL behind the preview image, revoked once replaced or cleared
+    this.photoUrl = null; // The item's existing photo_url when editing, or null when creating
   }
 
   /**
@@ -41,12 +49,18 @@ class CreateItemPage {
 
     if (this.isEditing && !(await this.#loadForEditing())) return;
 
+    this.photoInput?.addEventListener("change", () => this.#handlePhotoSelect());
+
     this.form.addEventListener("submit", (event) => this.handleSubmit(event));
 
-    // Add an event listener to every input field in the form.
+    // Add an event listener to every backend-submitted field.
     // After a failed submission, when the user edits a field,
     // remove that field's error style and hide the form-level error message.
+    // The photo input is excluded: it has no `name` (it isn't part of the
+    // values sent to Api.createItem/patchItem) and manages its own error
+    // state in #handlePhotoSelect, so #showFieldError does not apply to it.
     Utils.qsa("input, select, textarea", this.form).forEach((field) => {
+      if (field === this.photoInput) return;
       field.addEventListener("input", () => {
         this.#showFieldError(field.name, false);
         Utils.hideAlert(this.errorAlert);
@@ -78,6 +92,26 @@ class CreateItemPage {
         ? await Api.patchItem(this.itemId, values)
         : await Api.createItem(values);
 
+      if (this.selectedPhoto && savedItem?.id) {
+        try {
+          await Api.uploadItemPhoto(savedItem.id, this.selectedPhoto);
+        } catch (photoError) {
+          if (this.isEditing) {
+            // The text fields already saved; let the user retry the photo
+            // without resubmitting (and re-saving) the rest of the form.
+            Utils.showAlert(this.errorAlert, photoError?.message || "Unable to upload photo. Please try again.");
+            this.#setSubmitting(false);
+            return;
+          }
+          // Creating: the item already exists, so resubmitting this form
+          // would duplicate it. Send the user to the item instead.
+          window.location.replace(
+            `item-details.html?id=${encodeURIComponent(savedItem.id)}&photo_error=1`,
+          );
+          return;
+        }
+      }
+
       Utils.showAlert(
         this.successAlert,
         this.isEditing
@@ -105,6 +139,58 @@ class CreateItemPage {
   }
 
   /**
+   * Validates the picked photo and shows its preview, or shows the
+   * validation error and clears any previous selection.
+   */
+  #handlePhotoSelect() {
+    const file = this.photoInput.files[0];
+    if (!file) return;
+
+    const error = Photo.validatePhotoFile(file);
+    if (error) {
+      this.photoInput.value = "";
+      this.selectedPhoto = null;
+      this.photoField.classList.add("has-error");
+      this.photoError.textContent = error;
+      this.#clearPreview();
+      return;
+    }
+
+    this.photoField.classList.remove("has-error");
+    this.selectedPhoto = file;
+    this.#revokePreview();
+    this.previewUrl = URL.createObjectURL(file);
+    this.photoPreview.src = this.previewUrl;
+    this.photoPreview.hidden = false;
+  }
+
+  /**
+   * Resets the preview to its baseline: the item's existing photo when
+   * editing, or hidden when posting a new item without one.
+   */
+  #clearPreview() {
+    this.#revokePreview();
+    if (this.photoUrl) {
+      this.photoPreview.src = this.photoUrl;
+      this.photoPreview.hidden = false;
+    } else {
+      this.photoPreview.hidden = true;
+      this.photoPreview.src = "";
+    }
+  }
+
+  /**
+   * Revokes the current preview's object URL, if any, so it does not leak
+   * once the preview is replaced or the page is left.
+   */
+  #revokePreview() {
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
+      this.previewUrl = null;
+    }
+  }
+
+  /**
    * Loads the item being edited and fills the form with it. Returns false when
    * the form must not be used: someone else's post, or one that is already
    * closed, both of which send the visitor back to the details page.
@@ -126,6 +212,12 @@ class CreateItemPage {
     }
 
     this.#fillForm(item);
+
+    this.photoUrl = item.photo_url;
+    if (this.photoUrl) {
+      this.photoPreview.src = this.photoUrl;
+      this.photoPreview.hidden = false;
+    }
 
     document.title = `BackToU: Edit ${item.title}`;
     Utils.qs("[data-form-heading]").textContent = "Edit your post";

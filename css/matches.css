@@ -43,8 +43,6 @@
   border-radius: var(--radius-sm);
 }
 .match-source-thumb img{ width: 100%; height: 100%; object-fit: cover; }
-/* Too small for the "No photo added yet" caption, so only the icon shows. */
-.match-source-thumb .thumb-placeholder span{ display: none; }
 
 .match-source-body{ flex: 1 1 auto; min-width: 0; }
 
