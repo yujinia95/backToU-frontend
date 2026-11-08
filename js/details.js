@@ -142,6 +142,7 @@ class ItemDetailsPage {
         ${this.#posterFooter(item, isOwner, isReturned)}
       </article>
     `;
+    Photo.renderPhoto(Utils.qs('.item-photo', this.content), item.imageUrl);
 
     if (this.ownerActions) this.ownerActions.hidden = !isOwner;
     if (this.resolveButton) this.resolveButton.hidden = isReturned;
@@ -272,7 +273,7 @@ class ItemDetailsPage {
     return `
       <div class="details-gallery">
         <div class="details-thumb">
-          ${CardRenderer.imageMarkup(item, 80)}
+          ${CardRenderer.imageMarkup()}
         </div>
       </div>
     `;
