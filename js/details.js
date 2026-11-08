@@ -10,8 +10,6 @@ class ItemDetailsPage {
     this.resolveConfirm = Utils.qs('[data-resolve-confirm]');
     this.deleteButton = Utils.qs('[data-delete-item]');
     this.deleteConfirm = Utils.qs('[data-delete-confirm]');
-    this.replacePhotoButton = Utils.qs('[data-replace-photo]');
-    this.photoInput = Utils.qs('[data-photo-input]');
     this.photoAlert = Utils.qs('[data-photo-alert]');
     this.item = null; // The item on this page, kept so button handlers can use it
   }
@@ -22,8 +20,6 @@ class ItemDetailsPage {
   async init() {
     this.resolveButton?.addEventListener('click', () => this.#handleResolve());
     this.deleteButton?.addEventListener('click', () => this.#handleDelete());
-    this.replacePhotoButton?.addEventListener('click', () => this.photoInput.click());
-    this.photoInput?.addEventListener('change', () => this.#handlePhotoChange());
     if (!this.content) return;
 
     const itemId = Utils.getParam('id');
@@ -35,7 +31,7 @@ class ItemDetailsPage {
     if (Utils.getParam('photo_error')) {
       Utils.showAlert(
         this.photoAlert,
-        'Your item was posted, but the photo failed to upload. Use "Replace photo" below to try again.',
+        'Your item was posted, but the photo failed to upload. Use "Edit" below to try again.',
       );
     }
 
@@ -88,34 +84,6 @@ class ItemDetailsPage {
     } catch (error) {
       alert(error?.message || 'Unable to delete this post. Please try again.');
       this.deleteButton.disabled = false;
-    }
-  }
-
-  /**
-   * Uploads the picked file as the item's new photo, then refetches the item
-   * so the updated photo_url (with its cache-busting ?v=) is shown.
-   */
-  async #handlePhotoChange() {
-    const file = this.photoInput.files[0];
-    this.photoInput.value = ''; // Reset so picking the same file again still fires "change".
-    if (!file || !this.item) return;
-
-    const validationError = Photo.validatePhotoFile(file);
-    if (validationError) {
-      Utils.showAlert(this.photoAlert, validationError);
-      return;
-    }
-    Utils.hideAlert(this.photoAlert);
-    this.replacePhotoButton.disabled = true;
-
-    try {
-      await Api.uploadItemPhoto(this.item.id, file);
-      this.item = new Item(await Api.getItem(this.item.id));
-      this.#renderItem(this.item);
-    } catch (error) {
-      Utils.showAlert(this.photoAlert, error?.message || 'Unable to upload photo. Please try again.');
-    } finally {
-      this.replacePhotoButton.disabled = false;
     }
   }
 
@@ -191,7 +159,6 @@ class ItemDetailsPage {
       this.editLink.hidden = isReturned;
       this.editLink.href = `create-item.html?id=${item.id}`;
     }
-    if (this.replacePhotoButton) this.replacePhotoButton.hidden = isReturned;
   }
 
   /**

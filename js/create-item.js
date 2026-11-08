@@ -22,8 +22,9 @@ class CreateItemPage {
     this.photoInput = Utils.qs("[data-photo-input]", this.form);
     this.photoPreview = Utils.qs("[data-photo-preview]", this.form);
     this.photoError = Utils.qs("[data-photo-error]", this.form);
-    this.selectedPhoto = null; // File chosen for upload, or null when posting without one
+    this.selectedPhoto = null; // File chosen for upload, or null when posting/saving without a new one
     this.previewUrl = null; // Object URL behind the preview image, revoked once replaced or cleared
+    this.photoUrl = null; // The item's existing photo_url when editing, or null when creating
   }
 
   /**
@@ -48,8 +49,6 @@ class CreateItemPage {
 
     if (this.isEditing && !(await this.#loadForEditing())) return;
 
-    // Photo replacement for an existing item lives on the detail page instead.
-    if (this.photoField) this.photoField.hidden = this.isEditing;
     this.photoInput?.addEventListener("change", () => this.#handlePhotoSelect());
 
     this.form.addEventListener("submit", (event) => this.handleSubmit(event));
@@ -93,12 +92,19 @@ class CreateItemPage {
         ? await Api.patchItem(this.itemId, values)
         : await Api.createItem(values);
 
-      if (!this.isEditing && this.selectedPhoto && savedItem?.id) {
+      if (this.selectedPhoto && savedItem?.id) {
         try {
           await Api.uploadItemPhoto(savedItem.id, this.selectedPhoto);
-        } catch {
-          // The item already exists; resubmitting this form would duplicate it,
-          // so send the user to the item instead of letting them retry here.
+        } catch (photoError) {
+          if (this.isEditing) {
+            // The text fields already saved; let the user retry the photo
+            // without resubmitting (and re-saving) the rest of the form.
+            Utils.showAlert(this.errorAlert, photoError?.message || "Unable to upload photo. Please try again.");
+            this.#setSubmitting(false);
+            return;
+          }
+          // Creating: the item already exists, so resubmitting this form
+          // would duplicate it. Send the user to the item instead.
           window.location.replace(
             `item-details.html?id=${encodeURIComponent(savedItem.id)}&photo_error=1`,
           );
@@ -159,12 +165,18 @@ class CreateItemPage {
   }
 
   /**
-   * Hides the preview image and revokes its object URL.
+   * Resets the preview to its baseline: the item's existing photo when
+   * editing, or hidden when posting a new item without one.
    */
   #clearPreview() {
     this.#revokePreview();
-    this.photoPreview.hidden = true;
-    this.photoPreview.src = "";
+    if (this.photoUrl) {
+      this.photoPreview.src = this.photoUrl;
+      this.photoPreview.hidden = false;
+    } else {
+      this.photoPreview.hidden = true;
+      this.photoPreview.src = "";
+    }
   }
 
   /**
@@ -200,6 +212,12 @@ class CreateItemPage {
     }
 
     this.#fillForm(item);
+
+    this.photoUrl = item.photo_url;
+    if (this.photoUrl) {
+      this.photoPreview.src = this.photoUrl;
+      this.photoPreview.hidden = false;
+    }
 
     document.title = `BackToU: Edit ${item.title}`;
     Utils.qs("[data-form-heading]").textContent = "Edit your post";
