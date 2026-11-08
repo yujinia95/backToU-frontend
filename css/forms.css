@@ -48,6 +48,10 @@
   border-radius: var(--radius-sm);
   margin-top: var(--space-2);
 }
+/* The global `img{ display: block }` rule in base.css otherwise overrides
+   the hidden attribute's own display:none, since author styles always win
+   over the user-agent stylesheet regardless of specificity. */
+.photo-preview[hidden]{ display: none; }
 
 .form-actions{
   display: flex;
