@@ -41,6 +41,14 @@
   cursor: not-allowed;
 }
 
+.photo-preview{
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-2);
+}
+
 .form-actions{
   display: flex;
   justify-content: flex-end;

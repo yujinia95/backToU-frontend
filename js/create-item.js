@@ -17,6 +17,13 @@ class CreateItemPage {
     this.itemId = Utils.getParam("id"); // Present only when editing an item
     this.currentUser = null; // Stores the logged-in user after init()
     this.isSubmitting = false; // Prevents the form from being submitted twice
+
+    this.photoField = Utils.qs('[data-field="photo"]', this.form);
+    this.photoInput = Utils.qs("[data-photo-input]", this.form);
+    this.photoPreview = Utils.qs("[data-photo-preview]", this.form);
+    this.photoError = Utils.qs("[data-photo-error]", this.form);
+    this.selectedPhoto = null; // File chosen for upload, or null when posting without one
+    this.previewUrl = null; // Object URL behind the preview image, revoked once replaced or cleared
   }
 
   /**
@@ -40,6 +47,10 @@ class CreateItemPage {
     }
 
     if (this.isEditing && !(await this.#loadForEditing())) return;
+
+    // Photo replacement for an existing item lives on the detail page instead.
+    if (this.photoField) this.photoField.hidden = this.isEditing;
+    this.photoInput?.addEventListener("change", () => this.#handlePhotoSelect());
 
     this.form.addEventListener("submit", (event) => this.handleSubmit(event));
 
@@ -78,6 +89,19 @@ class CreateItemPage {
         ? await Api.patchItem(this.itemId, values)
         : await Api.createItem(values);
 
+      if (!this.isEditing && this.selectedPhoto && savedItem?.id) {
+        try {
+          await Api.uploadItemPhoto(savedItem.id, this.selectedPhoto);
+        } catch {
+          // The item already exists; resubmitting this form would duplicate it,
+          // so send the user to the item instead of letting them retry here.
+          window.location.replace(
+            `item-details.html?id=${encodeURIComponent(savedItem.id)}&photo_error=1`,
+          );
+          return;
+        }
+      }
+
       Utils.showAlert(
         this.successAlert,
         this.isEditing
@@ -101,6 +125,52 @@ class CreateItemPage {
 
       Utils.showAlert(this.errorAlert, message);
       this.#setSubmitting(false);
+    }
+  }
+
+  /**
+   * Validates the picked photo and shows its preview, or shows the
+   * validation error and clears any previous selection.
+   */
+  #handlePhotoSelect() {
+    const file = this.photoInput.files[0];
+    if (!file) return;
+
+    const error = Photo.validatePhotoFile(file);
+    if (error) {
+      this.photoInput.value = "";
+      this.selectedPhoto = null;
+      this.photoField.classList.add("has-error");
+      this.photoError.textContent = error;
+      this.#clearPreview();
+      return;
+    }
+
+    this.photoField.classList.remove("has-error");
+    this.selectedPhoto = file;
+    this.#revokePreview();
+    this.previewUrl = URL.createObjectURL(file);
+    this.photoPreview.src = this.previewUrl;
+    this.photoPreview.hidden = false;
+  }
+
+  /**
+   * Hides the preview image and revokes its object URL.
+   */
+  #clearPreview() {
+    this.#revokePreview();
+    this.photoPreview.hidden = true;
+    this.photoPreview.src = "";
+  }
+
+  /**
+   * Revokes the current preview's object URL, if any, so it does not leak
+   * once the preview is replaced or the page is left.
+   */
+  #revokePreview() {
+    if (this.previewUrl) {
+      URL.revokeObjectURL(this.previewUrl);
+      this.previewUrl = null;
     }
   }
 

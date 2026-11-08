@@ -32,6 +32,13 @@ class ItemDetailsPage {
       return;
     }
 
+    if (Utils.getParam('photo_error')) {
+      Utils.showAlert(
+        this.photoAlert,
+        'Your item was posted, but the photo failed to upload. Use "Replace photo" below to try again.',
+      );
+    }
+
     try {
       const data = await Api.getItem(itemId);
       this.item = new Item(data);
