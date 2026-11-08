@@ -79,6 +79,16 @@ class Api {
     return this.request(`/items/${id}`);
   }
 
+  static async uploadItemPhoto(id, file) {
+    const form = new FormData();
+    form.append("photo", file);
+    return this.request(`/items/${id}/photo`, {
+        authRequired: true,
+        method: "PUT",
+        body: form,
+    });  
+  }
+
   static async patchItem(id, data) {
     return this.request(`/items/${id}`, {
       authRequired: true,
