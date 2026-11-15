@@ -84,6 +84,14 @@ class CreateItemPage {
       return;
     }
 
+    if (this.photoField.classList.contains("has-error")) {
+      if (!window.confirm("The selected photo is invalid. Continue without uploading it?")) {
+        return;
+      }
+      this.photoField.classList.remove("has-error");
+      this.photoError.textContent = "";
+    }
+    
     this.#setSubmitting(true);
 
     // Send the item data to the API and handle a successful response.
