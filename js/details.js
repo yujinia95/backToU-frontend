@@ -28,11 +28,16 @@ class ItemDetailsPage {
       return;
     }
 
+    // Show the photo upload failure once, then drop the flag from the URL
+    // so a page refresh doesn't show it again.
     if (Utils.getParam('photo_error')) {
       Utils.showAlert(
         this.photoAlert,
         'Your item was posted, but the photo failed to upload. Use "Edit" below to try again.',
       );
+      const url = new URL(window.location.href);
+      url.searchParams.delete('photo_error');
+      history.replaceState(null, '', url);
     }
 
     try {
