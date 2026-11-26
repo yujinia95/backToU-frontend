@@ -3,12 +3,13 @@
  * so the rest of the frontend works with a consistent shape instead of raw fetch data.
  */
 class Item {
-    constructor({ id, user_id, type, status, date, title, description, category, colors, brand, location, created_at, returned_at = null, poster = null, photo_url = null }) {
+    constructor({ id, user_id, type, status, date, end_date = null, title, description, category, colors, brand, location, created_at, returned_at = null, poster = null, photo_url = null }) {
         this.id = id;
         this.user_id = user_id;
         this.type = type;
         this.status = status;
         this.date = date;
+        this.end_date = end_date;
         this.title = title;
         this.description = description;
         this.category = category;

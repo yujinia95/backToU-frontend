@@ -25,6 +25,8 @@ class CreateItemPage {
     this.selectedPhoto = null; // File chosen for upload, or null when posting/saving without a new one
     this.previewUrl = null; // Object URL behind the preview image, revoked once replaced or cleared
     this.photoUrl = null; // The item's existing photo_url when editing, or null when creating
+
+    this.dateLabel = Utils.qs("[data-date-label]", this.form); // Label of the first date field
   }
 
   /**
@@ -50,6 +52,13 @@ class CreateItemPage {
     if (this.isEditing && !(await this.#loadForEditing())) return;
 
     this.photoInput?.addEventListener("change", () => this.#handlePhotoSelect());
+
+    // Reword the first date label whenever the post type or the end date changes.
+    Utils.qsa('input[name="type"]', this.form).forEach((radio) => {
+      radio.addEventListener("change", () => this.#updateDateLabel());
+    });
+    this.form.elements.end_date.addEventListener("input", () => this.#updateDateLabel());
+    this.#updateDateLabel();
 
     this.form.addEventListener("submit", (event) => this.handleSubmit(event));
 
@@ -238,6 +247,7 @@ class CreateItemPage {
     fields.title.value = item.title;
     fields.category.value = item.category;
     fields.date.value = item.date;
+    fields.end_date.value = item.end_date ?? "";
     fields.brand.value = item.brand ?? "";
     fields.colors.value = item.colors.join(", ");
     fields.location.value = item.location;
@@ -260,6 +270,7 @@ class CreateItemPage {
     return {
       type: getText("type"),
       date: getText("date"),
+      end_date: getText("end_date") || null,
       title: getText("title"),
       description: getText("description") || null,
       category: getText("category"),
@@ -278,6 +289,8 @@ class CreateItemPage {
       category:
         Utils.isNonEmpty(values.category) && values.category.length <= 50,
       date: Utils.isNonEmpty(values.date),
+      // YYYY-MM-DD strings sort in date order, so a plain string comparison works.
+      end_date: values.end_date === null || values.end_date > values.date,
       brand: values.brand === null || values.brand.length <= 100,
       colors:
         values.colors.length > 0 &&
@@ -304,6 +317,17 @@ class CreateItemPage {
   }
 
   /**
+   * Words the first date label for the post type and whether an end date is set:
+   * "Date lost" / "Date found" for one day, "Lost between" / "Found between" for a range.
+   */
+  #updateDateLabel() {
+    const verb = this.form.elements.type.value === "lost" ? "Lost" : "Found";
+    const hasEndDate = this.form.elements.end_date.value !== "";
+
+    this.dateLabel.textContent = hasEndDate ? `${verb} between` : `Date ${verb.toLowerCase()}`;
+  }
+
+  /**
    * Shows or hides the error state for one form field.
    */
   #showFieldError(name, shouldShow) {
@@ -311,7 +335,7 @@ class CreateItemPage {
     const input = this.form.elements.namedItem(name);
 
     field?.classList.toggle("has-error", shouldShow);
-    input?.setAttribute("aria-invalid", String(shouldShow));
+    input?.setAttribute?.("aria-invalid", String(shouldShow));
   }
 
   /**

@@ -84,27 +84,33 @@
           <p class="error">Enter a short title for the item.</p>
         </div>
 
+        <div class="field" data-field="category">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="">Select a category</option>
+            <option>Bags</option>
+            <option>Clothing</option>
+            <option>Electronics</option>
+            <option>Keys</option>
+            <option>Jewelry</option>
+            <option>Accessories</option>
+            <option>Sports</option>
+            <option>Documents</option>
+            <option>Other</option>
+          </select>
+          <p class="error">Choose a category.</p>
+        </div>
+
         <div class="field-row">
-          <div class="field" data-field="category">
-            <label for="category">Category</label>
-            <select id="category" name="category" required>
-              <option value="">Select a category</option>
-              <option>Bags</option>
-              <option>Clothing</option>
-              <option>Electronics</option>
-              <option>Keys</option>
-              <option>Jewelry</option>
-              <option>Accessories</option>
-              <option>Sports</option>
-              <option>Documents</option>
-              <option>Other</option>
-            </select>
-            <p class="error">Choose a category.</p>
-          </div>
           <div class="field" data-field="date">
-            <label for="date">Date</label>
+            <label for="date" data-date-label>Date found</label>
             <input type="date" id="date" name="date" required>
             <p class="error">Choose the date it was lost or found.</p>
+          </div>
+          <div class="field" data-field="end_date">
+            <label for="end_date">To <span class="hint-inline">(optional)</span></label>
+            <input type="date" id="end_date" name="end_date">
+            <p class="error">Choose a date after the first one.</p>
           </div>
         </div>
 
