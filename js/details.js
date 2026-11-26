@@ -115,7 +115,9 @@ class ItemDetailsPage {
    * Renders the item information inside the details container.
    */
   #renderItem(item) {
-    const dateLabel = item.type === 'found' ? 'Date found' : 'Date lost';
+    const dateLabel = item.type === 'found'
+      ? (item.end_date ? 'Found between' : 'Date found')
+      : (item.end_date ? 'Lost between' : 'Date lost');
     const colors = item.colors.join(', ');
     const brand = item.brand || 'Not specified';
     const description = item.description || 'No description provided.';
@@ -137,10 +139,10 @@ class ItemDetailsPage {
 
         <dl class="details-facts">
           ${isReturned
-            ? `${this.#fact(dateLabel, this.#formatDate(item.date))}
+            ? `${this.#fact(dateLabel, this.#formatDateRange(item))}
                ${this.#fact('Returned on', Utils.formatDate(item.returned_at))}`
             : `${this.#fact('Status', this.#capitalize(item.status))}
-               ${this.#fact(dateLabel, this.#formatDate(item.date))}`}
+               ${this.#fact(dateLabel, this.#formatDateRange(item))}`}
           ${this.#fact('Category', item.category)}
           ${this.#fact('Location', item.location)}
           ${this.#fact('Colors', colors)}
@@ -198,7 +200,7 @@ class ItemDetailsPage {
         <div class="details-timeline-row">
           <span class="details-timeline-dot" aria-hidden="true"></span>
           <span class="details-timeline-label">${Utils.escapeHtml(item.reportedLabel)}</span>
-          <span class="details-timeline-date">${Utils.escapeHtml(this.#formatDate(item.date))}</span>
+          <span class="details-timeline-date">${Utils.escapeHtml(this.#formatDateRange(item))}</span>
         </div>
         <span class="details-timeline-rail" aria-hidden="true"></span>
         <div class="details-timeline-row details-timeline-row--done">
@@ -318,6 +320,11 @@ class ItemDetailsPage {
       day: 'numeric',
       year: 'numeric',
     });
+  }
+
+  #formatDateRange(item) {
+    const start = this.#formatDate(item.date);
+    return item.end_date ? `${start} ~ ${this.#formatDate(item.end_date)}` : start;
   }
 
   /**
